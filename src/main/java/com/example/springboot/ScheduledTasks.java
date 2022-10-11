@@ -4,15 +4,16 @@ import java.text.SimpleDateFormat;
 import java.io.File;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import javax.xml.parsers.DocumentBuilderFactory;  
-import javax.xml.parsers.DocumentBuilder;  
-import org.w3c.dom.Document;  
-import org.w3c.dom.NodeList;  
-import org.w3c.dom.Node;  
-import org.w3c.dom.Element;  
+import org.slf4j.LoggerFactory; 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 @Component
 public class ScheduledTasks {
@@ -21,30 +22,21 @@ public class ScheduledTasks {
 
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 
+	JSONParser parser = new JSONParser();
+
 	@Scheduled(fixedRate = 5000)
 	public void reportCurrentTime() {
 		try {
+			String filePath = new File("").getAbsolutePath();
 			// creating a constructor of file class and parsing an XML file
-			File file = new File("src/main/resources/map");
-			System.out.println(file.getAbsolutePath());
-			// an instance of factory that gives a document builder
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			// // an instance of builder to parse the specified xml file
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			Document doc = db.parse(file);
-			doc.getDocumentElement().normalize();
-			System.out.println("Root element: " + doc.getDocumentElement().getNodeName());
-			NodeList nodeList = doc.getElementsByTagName("node");
-			// nodeList is not iterable, so we are using for loop
-			for (int itr = 0; itr < nodeList.getLength(); itr++) {
-				Node node = nodeList.item(itr);
-				System.out.println("\nNode Name :" + node.getNodeName());
-				if (node.getNodeType() == Node.ELEMENT_NODE) {
-					Element eElement = (Element) node;
-					System.out.println(eElement.getAttribute("id"));
-				
+			Object obj = parser.parse(new FileReader(filePath + "/src/main/resources/map.geojson"));
+			JSONObject jsonObject =  (JSONObject) obj;
+			JSONArray jsonArr = (JSONArray) jsonObject.get("features");
+
+			for (int i=0; i < jsonArr.size(); i++) {
+				JSONObject curr = (JSONObject) jsonArr.get(i);
+				log.info(curr.get("properties").toString());
 			}
-		}
 
 		} catch (Exception e) {
 			e.printStackTrace();

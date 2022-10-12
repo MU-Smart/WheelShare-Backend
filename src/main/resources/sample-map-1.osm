@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="CGImap 0.8.8 (322245 spike-06.openstreetmap.org)" copyright="OpenStreetMap and contributors" attribution="http://www.openstreetmap.org/copyright" license="http://opendatacommons.org/licenses/odbl/1-0/">
+
+  <node id="1" visible="true" version="7" changeset="82103378" timestamp="2020-03-12T09:13:04Z" user="bhavant" uid="10208966" lat="39.5160558" lon="-84.7406964"/>
+  <node id="2" visible="true" version="6" changeset="115957093" timestamp="2022-01-09T20:39:05Z" user="Eiim" uid="11498183" lat="39.5160384" lon="-84.7375079"/>
+  <node id="3" visible="true" version="8" changeset="116941801" timestamp="2022-02-03T01:46:03Z" user="Eiim" uid="11498183" lat="39.5025515" lon="-84.7450542"/>
+  <node id="4" visible="true" version="14" changeset="116941801" timestamp="2022-02-03T01:46:03Z" user="Eiim" uid="11498183" lat="39.5083508" lon="-84.7392700"/>
+  <node id="5" visible="true" version="5" changeset="79386347" timestamp="2020-01-09T16:59:05Z" user="Adam_P" uid="797975" lat="39.5083024" lon="-84.7379947"/>
+  <node id="6" visible="true" version="9" changeset="79386347" timestamp="2020-01-09T16:59:05Z" user="Adam_P" uid="797975" lat="39.5079946" lon="-84.7374112"/>
+  <node id="7" visible="true" version="7" changeset="79386347" timestamp="2020-01-09T16:59:05Z" user="Adam_P" uid="797975" lat="39.5076464" lon="-84.7374233"/>
+  <node id="8" visible="true" version="8" changeset="116941801" timestamp="2022-02-03T01:46:03Z" user="Eiim" uid="11498183" lat="39.5072846" lon="-84.7374453"/>
+  <node id="9" visible="true" version="6" changeset="74457935" timestamp="2019-09-14T00:37:56Z" user="JokerLion" uid="7121552" lat="39.5081597" lon="-84.7322137"/>
+
+  <way id="01" visible="true" version="1" changeset="111653596" timestamp="2021-09-24T15:32:12Z" user="Eiim" uid="11498183">
+    <nd ref="1"/>
+    <nd ref="2"/>
+    <nd ref="3"/>
+    <nd ref="9"/>
+  </way>
+
+  <way id="02" visible="true" version="1" changeset="111653596" timestamp="2021-09-24T15:32:12Z" user="Eiim" uid="11498183">
+    <nd ref="2"/>
+    <nd ref="4"/>
+    <nd ref="5"/>
+    <nd ref="6"/>
+    <nd ref="7"/>
+  </way>
+
+  <way id="03" visible="true" version="1" changeset="111653596" timestamp="2021-09-24T15:32:12Z" user="Eiim" uid="11498183">
+    <nd ref="3"/>
+    <nd ref="5"/>
+    <nd ref="8"/>
+  </way>
+
+  <way id="04" visible="true" version="1" changeset="111653596" timestamp="2021-09-24T15:32:12Z" user="Eiim" uid="11498183">
+    <nd ref="8"/>
+    <nd ref="9"/>
+  </way>
+</osm>

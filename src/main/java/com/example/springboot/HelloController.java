@@ -5,17 +5,18 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.example.springboot.ScheduledTasks;
+
+import com.example.springboot.Services.MapServiceImpl;
 
 @RestController
 public class HelloController {
 
 	@Autowired
-	private ScheduledTasks scheduledTasks;
+	private MapServiceImpl mapService;
 
 	@GetMapping("/test")
 	public String index() {
-		String result = scheduledTasks.result;
+		String result = mapService.getNodeMap().toString();
 		return result;
 	}
 

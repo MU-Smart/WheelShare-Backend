@@ -12,13 +12,18 @@ public class HelloController {
 	@Autowired
 	private MapServiceBuilderImpl mapService;
 
-	@GetMapping("/test")
-	public String index() {
+	@GetMapping("/nodeMap")
+	public String retrieveNodeMap() {
 		return mapService.getNodeMap().toString();
 	}
 
+	@GetMapping("/edgeMap")
+	public String retrieveEdgeMap() {
+		return mapService.getEdgeMap().toString();
+	}
+
 	@GetMapping("/health")
-	public String health() {
+	public String healthCheck() {
 		return "Health: 100%! The backend server is up and running!";
 	}
 

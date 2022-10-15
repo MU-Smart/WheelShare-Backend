@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.springboot.Services.MapServiceBuilderImpl;
 
 @RestController
-public class HelloController {
+public class WheelShareController {
 
 	@Autowired
 	private MapServiceBuilderImpl mapService;

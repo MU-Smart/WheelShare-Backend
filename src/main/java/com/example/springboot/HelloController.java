@@ -1,28 +1,25 @@
 package com.example.springboot;
 
-import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.springboot.Services.MapServiceImpl;
+import com.example.springboot.Services.MapServiceBuilderImpl;
 
 @RestController
 public class HelloController {
 
 	@Autowired
-	private MapServiceImpl mapService;
+	private MapServiceBuilderImpl mapService;
 
 	@GetMapping("/test")
 	public String index() {
-		String result = mapService.getNodeMap().toString();
-		return result;
+		return mapService.getNodeMap().toString();
 	}
 
-	@GetMapping("/hello")
-	public String index2() {
-		return "Greetings from Spring Boot! 2";
+	@GetMapping("/health")
+	public String health() {
+		return "Health: 100%! The backend server is up and running!";
 	}
 
 }

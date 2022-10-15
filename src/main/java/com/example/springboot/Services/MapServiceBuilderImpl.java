@@ -11,16 +11,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.example.springboot.Models.MapNode;
+
 import java.io.FileReader;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 @Service
-public class MapServiceImpl implements MapService {
+public class MapServiceBuilderImpl implements MapServiceBuilder {
 
-	private static final Logger log = LoggerFactory.getLogger(MapServiceImpl.class);
-	private Map<Integer, List<Integer>> nodeMap = new HashMap<Integer, List<Integer>>();
+	private static final Logger log = LoggerFactory.getLogger(MapServiceBuilderImpl.class);
+	private Map<Integer, List<MapNode>> nodeMap = new HashMap<Integer, List<MapNode>>();
+
+
 	JSONParser parser = new JSONParser();
 	
 	@Scheduled(fixedRate = 5000)
@@ -39,18 +43,27 @@ public class MapServiceImpl implements MapService {
 
 			for (int i=0; i < nodeList.size(); i++) {
 				JSONObject currNode = (JSONObject) nodeList.get(i);
+
 				Integer nodeId = Integer.parseInt(currNode.get("id").toString());
+				Boolean visible = Boolean.parseBoolean(currNode.get("visible").toString());
+				Integer version = Integer.parseInt(currNode.get("version").toString());
+				Long changeSet = Long.parseLong(currNode.get("changeset").toString());
+				String timestamp = currNode.get("timestamp").toString();
+				String user = currNode.get("user").toString();
+				Long userId = Long.parseLong(currNode.get("uid").toString());
+				Float latitude = Float.parseFloat(currNode.get("lat").toString());
+				Float longtitude = Float.parseFloat(currNode.get("lon").toString());
 				
-				List<Integer> itemsList = nodeMap.get(nodeId);
+				List<MapNode> itemsList = nodeMap.get(nodeId);
+				MapNode mapNode = new MapNode(visible, version, changeSet, timestamp, user, userId, latitude, longtitude);
 
 				if (itemsList == null)	{
-					itemsList = new ArrayList<Integer>();
-					itemsList.add(nodeId);
+					itemsList = new ArrayList<MapNode>();
+					itemsList.add(mapNode);
 					nodeMap.put(nodeId, itemsList);
 				}	else	{
-					itemsList.add(nodeId);
+					itemsList.add(mapNode);
 				}
-
 			}
 		} catch (Exception e) {
 			System.out.println("error");
@@ -58,7 +71,7 @@ public class MapServiceImpl implements MapService {
 		}
 	}
 
-	public Map<Integer, List<Integer>> getNodeMap()	{
+	public Map<Integer, List<MapNode>> getNodeMap()	{
 		return nodeMap;
 	}
 }

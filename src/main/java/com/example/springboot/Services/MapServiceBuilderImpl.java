@@ -100,8 +100,10 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 					}
 				}
 			}
-			log.info("" + nodeMap.size());
-			log.info("" + edgeMap.size());
+
+			log.info("Succesfully constructed the map");
+			log.info(String.format("Node Map Size = %d", nodeMap.size()));
+			log.info(String.format("Edge Map Size = %d", edgeMap.size()));
 		} catch (Exception e) {
 			log.error("Error in buildMap function", e);
 			e.printStackTrace();

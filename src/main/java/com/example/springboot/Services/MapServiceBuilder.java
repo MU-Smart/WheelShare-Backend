@@ -6,7 +6,7 @@ import java.util.Map;
 import com.example.springboot.Models.MapNode;
 
 public interface MapServiceBuilder {
-  public Map<Integer, MapNode> getNodeMap();
-  public Map<Integer, List<Integer>> getEdgeMap();
+  public Map<Long, MapNode> getNodeMap();
+  public Map<Long, List<Long>> getEdgeMap();
   public void buildMap();
 }

@@ -23,8 +23,8 @@ import org.json.simple.parser.JSONParser;
 public class MapServiceBuilderImpl implements MapServiceBuilder {
 
 	private static final Logger log = LoggerFactory.getLogger(MapServiceBuilderImpl.class);
-	private Map<Integer, MapNode> nodeMap = new HashMap<Integer, MapNode>();
-	private Map<Integer, List<Integer>> edgeMap = new HashMap<Integer, List<Integer>>();
+	private Map<Long, MapNode> nodeMap = new HashMap<Long, MapNode>();
+	private Map<Long, List<Long>> edgeMap = new HashMap<Long, List<Long>>();
 
 	JSONParser parser = new JSONParser();
 
@@ -34,7 +34,7 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 			String absoluteFilePath = new File("").getAbsolutePath();
 			log.info(absoluteFilePath);
 
-			Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath + "/src/main/resources/sample-map-1.json"));
+			Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath + "/src/main/resources/mapData.json"));
 			JSONObject jsonObject = (JSONObject) jsonFileObject;
 
 			nodeMap.clear();
@@ -43,48 +43,47 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 			/*
 			 * Handles node list processing from file
 			 */
-
-			JSONArray jsonNodeList = (JSONArray) jsonObject.get("node");
+			JSONObject osmJsonObject = (JSONObject) jsonObject.get("osm");
+			JSONArray jsonNodeList = (JSONArray) osmJsonObject.get("node");
 
 			for (int i = 0; i < jsonNodeList.size(); i++) {
 				JSONObject currNode = (JSONObject) jsonNodeList.get(i);
 
-				Integer nodeId = Integer.parseInt(currNode.get("id").toString());
-				Boolean visible = Boolean.parseBoolean(currNode.get("visible").toString());
-				Integer version = Integer.parseInt(currNode.get("version").toString());
-				Long changeSet = Long.parseLong(currNode.get("changeset").toString());
-				String timestamp = currNode.get("timestamp").toString();
-				String user = currNode.get("user").toString();
-				Long userId = Long.parseLong(currNode.get("uid").toString());
-				Float latitude = Float.parseFloat(currNode.get("lat").toString());
-				Float longtitude = Float.parseFloat(currNode.get("lon").toString());
+				Long nodeId = Long.parseLong(currNode.get("@id").toString());
+				Integer version = Integer.parseInt(currNode.get("@version").toString());
+				Long changeSet = Long.parseLong(currNode.get("@changeset").toString());
+				String timestamp = currNode.get("@timestamp").toString();
+				String user = currNode.get("@user").toString();
+				Long userId = Long.parseLong(currNode.get("@uid").toString());
+				Float latitude = Float.parseFloat(currNode.get("@lat").toString());
+				Float longtitude = Float.parseFloat(currNode.get("@lon").toString());
 
 				if (nodeMap.containsKey(nodeId)) {
 					throw new InvalidMetadataException(
 							String.format("Duplicate node id Exception: Node %d. Please check the input files for errors.", nodeId));
 				}
-				MapNode mapNode = new MapNode(visible, version, changeSet, timestamp, user, userId, latitude, longtitude);
+				MapNode mapNode = new MapNode(version, changeSet, timestamp, user, userId, latitude, longtitude);
 				nodeMap.put(nodeId, mapNode);
 			}
 
-			JSONArray wayList = (JSONArray) jsonObject.get("way");
+			JSONArray wayList = (JSONArray) osmJsonObject.get("way");
 			for (int i = 0; i < wayList.size(); i++) {
 				JSONObject currWay = (JSONObject) wayList.get(i);
 				JSONArray currWayNodeList = (JSONArray) currWay.get("nd");
 
 				for (int startIndex = 0; startIndex < currWayNodeList.size(); startIndex++) {
 					JSONObject startNodeObj = (JSONObject) currWayNodeList.get(startIndex);
-					int startNode = Integer.parseInt(startNodeObj.get("ref").toString());
+					long startNode = Long.parseLong(startNodeObj.get("@ref").toString());
 
 					for (int endIndex = startIndex + 1; endIndex < currWayNodeList.size(); endIndex++) {
 						JSONObject endNodeObj = (JSONObject) currWayNodeList.get(endIndex);
-						int endNode = Integer.parseInt(endNodeObj.get("ref").toString());
+						long endNode = Long.parseLong(endNodeObj.get("@ref").toString());
 						
-						List<Integer> startNodeList = edgeMap.get(startNode);
-						List<Integer> endNodeList = edgeMap.get(endNode);
+						List<Long> startNodeList = edgeMap.get(startNode);
+						List<Long> endNodeList = edgeMap.get(endNode);
 
 						if (startNodeList == null)	{
-							startNodeList = new ArrayList<Integer>();
+							startNodeList = new ArrayList<Long>();
 							startNodeList.add(endNode);
 							edgeMap.put(startNode, startNodeList);
 						}	else	{
@@ -92,7 +91,7 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 						}
 
 						if (endNodeList == null)	{
-							endNodeList = new ArrayList<Integer>();
+							endNodeList = new ArrayList<Long>();
 							endNodeList.add(startNode);
 							edgeMap.put(endNode, endNodeList);
 						}	else	{
@@ -101,17 +100,19 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 					}
 				}
 			}
+			log.info("" + nodeMap.size());
+			log.info("" + edgeMap.size());
 		} catch (Exception e) {
 			log.error("Error in buildMap function", e);
 			e.printStackTrace();
 		}
 	}
 
-	public Map<Integer, MapNode> getNodeMap() {
+	public Map<Long, MapNode> getNodeMap() {
 		return nodeMap;
 	}
 
-	public Map<Integer, List<Integer>> getEdgeMap() {
+	public Map<Long, List<Long>> getEdgeMap() {
 		return edgeMap;
 	}
 }

@@ -35,6 +35,7 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 			log.info(absoluteFilePath);
 
 			Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath + "/src/main/resources/mapData.json"));
+//			Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath + "/routing/mapData.json"));
 			JSONObject jsonObject = (JSONObject) jsonFileObject;
 
 			nodeMap.clear();

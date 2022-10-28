@@ -51,6 +51,13 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 			JSONObject osmJsonObject = (JSONObject) jsonObject.get("osm");
 			JSONArray jsonNodeList = (JSONArray) osmJsonObject.get("node");
 
+			log.info("Test Info");
+			log.info(osmJsonObject.get("@version").getClass().toString());
+			log.info(osmJsonObject.get("@generator").getClass().toString());
+			log.info(osmJsonObject.get("note").getClass().toString());
+			log.info(osmJsonObject.get("node").getClass().toString());
+
+			// ------------------------------------ Node Map ------------------------------------//
 			for (int i = 0; i < jsonNodeList.size(); i++) {
 				JSONObject currNode = (JSONObject) jsonNodeList.get(i);
 
@@ -71,6 +78,7 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 				nodeMap.put(nodeId, mapNode);
 			}
 
+			// ------------------------------------ Way Map ------------------------------------//
 			JSONArray wayList = (JSONArray) osmJsonObject.get("way");
 			log.info(String.format("Class Name : %s", wayList.getClass().toString()));
 			for (int i = 0; i < wayList.size(); i++) {

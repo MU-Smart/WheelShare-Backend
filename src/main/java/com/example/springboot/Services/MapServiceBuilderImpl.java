@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import com.example.springboot.Models.MapNode;
 
 import java.io.FileReader;
+
+import org.javatuples.Pair;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -25,6 +27,7 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 	private static final Logger log = LoggerFactory.getLogger(MapServiceBuilderImpl.class);
 	private Map<Long, MapNode> nodeMap = new HashMap<Long, MapNode>();
 	private Map<Long, List<Long>> edgeMap = new HashMap<Long, List<Long>>();
+	private Map<Pair<Long, Long>, Double> weightMap = new HashMap<Pair<Long, Long>, Double>();
 
 	JSONParser parser = new JSONParser();
 
@@ -35,11 +38,12 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 			log.info(absoluteFilePath);
 
 			Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath + "/src/main/resources/mapData.json"));
-//			Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath + "/routing/mapData.json"));
+			// Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath + "/routing/mapData.json"));
 			JSONObject jsonObject = (JSONObject) jsonFileObject;
 
 			nodeMap.clear();
 			edgeMap.clear();
+			weightMap.clear();
 
 			/*
 			 * Handles node list processing from file
@@ -68,6 +72,7 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 			}
 
 			JSONArray wayList = (JSONArray) osmJsonObject.get("way");
+			log.info(String.format("Class Name : %s", wayList.getClass().toString()));
 			for (int i = 0; i < wayList.size(); i++) {
 				JSONObject currWay = (JSONObject) wayList.get(i);
 				JSONArray currWayNodeList = (JSONArray) currWay.get("nd");
@@ -98,6 +103,12 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 						}	else	{
 							endNodeList.add(startNode);
 						}
+
+						// Pair<Long, Long> startEndNodePair = new Pair<Long, Long>(startNode, endNode);
+						// Pair<Long, Long> endStartNodePair = new Pair<Long, Long>(endNode, startNode);
+
+
+
 					}
 				}
 			}

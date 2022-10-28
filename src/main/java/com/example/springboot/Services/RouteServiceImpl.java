@@ -18,14 +18,14 @@ import org.javatuples.Pair;
 public class RouteServiceImpl implements RouteService {
 
     /**
-     * Return the nearest node's id to the given longtitude and latitude
+     * Return the nearest node's id to the given latitude and longtitude
      * 
+     * @param latitude
      * @param longtitude
-     * @param lattitude
-     * @param refToNode
+     * @param nodeMap
      * @return
      */
-    public Long getClosestNode(float longitude, float latitude, Map<Long, MapNode> nodeMap) {
+    public Long getClosestNode(double latitude, double longitude, Map<Long, MapNode> nodeMap) {
         long nearestNodeId = -1L;
         double minDistance = Double.MAX_VALUE;
 
@@ -38,12 +38,11 @@ public class RouteServiceImpl implements RouteService {
                 nearestNodeId = nodeId;
             }
         }
-
         return nearestNodeId;
     }
 
     @Override
-    public List<Long> buildRoute(float srcLon, float srcLat, float destLon, float destLat,
+    public List<Long> buildRoute(double srcLat, double srcLon, double destLon, double destLat,
             Map<Long, MapNode> nodeMap, Map<Long, List<Long>> edgeMap,
             Map<Pair<Long, Long>, Double> weightMap) {
 

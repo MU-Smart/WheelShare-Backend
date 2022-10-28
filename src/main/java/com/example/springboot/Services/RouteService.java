@@ -7,7 +7,7 @@ import java.util.Map;
 import org.javatuples.Pair;
 
 public interface RouteService {
-    List<Long> buildRoute (float srcLon, float srcLat, float destLon, float destLat,
+    List<Long> buildRoute (double srcLon, double srcLat, double destLon, double destLat,
                            Map<Long, MapNode> nodeMap, Map<Long, List<Long>> edgeMap, 
                            Map<Pair<Long, Long>, Double> weightMap);
 }

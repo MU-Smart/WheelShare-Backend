@@ -9,11 +9,12 @@ public class MapNode {
   private String timeStamp;
   private String user;
   private long userId;
-  private float latitute;
-  private float longtitude;
+  private double latitute;
+  private double longtitude;
 
-  public MapNode(int version, long changeSet, String timeStamp, String user, long userId, float latitude, float longtitude) {
-    this.version = version; 
+  public MapNode(int version, long changeSet, String timeStamp, String user, long userId, double latitude,
+      double longtitude) {
+    this.version = version;
     this.changeSet = changeSet;
     this.timeStamp = timeStamp;
     this.user = user;
@@ -22,10 +23,20 @@ public class MapNode {
     this.longtitude = longtitude;
   }
 
-  public double distanceTo(float lon, float lat) {
-    double distance = 1.00;
-    // TODO Implement the Haversine Formula
+  public double distanceTo(double lon, double lat) {
     // * https://www.movable-type.co.uk/scripts/latlong.html
-    return distance;
-}
+
+    double dLat = Math.toRadians(lat - this.latitute);
+    double dLon = Math.toRadians(lon - this.longtitude);
+
+    double radianLat1 = Math.toRadians(this.latitute);
+    double radianLat2 = Math.toRadians(lat);
+
+    double haversineFormula = Math.pow(Math.sin(dLat / 2), 2) +
+        Math.pow(Math.sin(dLon / 2), 2) *
+            Math.cos(radianLat1) * Math.cos(radianLat2);
+    double rad = 6371;
+    double c = 2 * Math.asin(Math.sqrt(haversineFormula));
+    return rad * c;
+  }
 }

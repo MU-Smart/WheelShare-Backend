@@ -28,7 +28,7 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 
 	JSONParser parser = new JSONParser();
 
-	@Scheduled(fixedRate = 5000)
+	@Scheduled(fixedRate = 60000)
 	public void buildMap() {
 		try {
 			String absoluteFilePath = new File("").getAbsolutePath();
@@ -56,8 +56,8 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 				String timestamp = currNode.get("@timestamp").toString();
 				String user = currNode.get("@user").toString();
 				Long userId = Long.parseLong(currNode.get("@uid").toString());
-				Float latitude = Float.parseFloat(currNode.get("@lat").toString());
-				Float longtitude = Float.parseFloat(currNode.get("@lon").toString());
+				Double latitude = Double.parseDouble(currNode.get("@lat").toString());
+				Double longtitude = Double.parseDouble(currNode.get("@lon").toString());
 
 				if (nodeMap.containsKey(nodeId)) {
 					throw new InvalidMetadataException(

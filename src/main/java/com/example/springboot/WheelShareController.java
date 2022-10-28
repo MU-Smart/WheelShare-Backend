@@ -39,8 +39,8 @@ public class WheelShareController {
 	}
 
 	@PostMapping("/getRoute")
-	public List<MapNode> retrieveRoute(@RequestParam float srcLon, @RequestParam float srcLat,
-								   @RequestParam float destLon, @RequestParam float destLat) {
+	public List<MapNode> retrieveRoute(@RequestParam double srcLon, @RequestParam double srcLat,
+								   @RequestParam double destLon, @RequestParam double destLat) {
 
 		Map<Long, MapNode> nodeMap = mapService.getNodeMap();
 		Map<Long, List<Long>> edgeMap = mapService.getEdgeMap();
@@ -59,9 +59,8 @@ public class WheelShareController {
 
 	@GetMapping("/getClosestNode")
 	@ResponseBody
-	public Long retrieveClosestNode(@RequestParam float srcLon, @RequestParam float srcLat) {
-		return routeService.getClosestNode(srcLon, srcLat, mapService.getNodeMap());
-		// return srcLat;
+	public Long retrieveClosestNode(@RequestParam double srcLat, @RequestParam double srcLon) {
+		return routeService.getClosestNode(srcLat, srcLon, mapService.getNodeMap());
 	}
 
 

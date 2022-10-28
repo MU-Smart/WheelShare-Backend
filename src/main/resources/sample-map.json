@@ -1,0 +1,40 @@
+{
+  "osm": {
+    "@version": 0.6,
+    "@generator": "Overpass API 0.7.59 e21c39fe",
+    "note": {
+      "$": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+    },
+    "meta": { "@osm_base": "2022-10-16T17:13:14Z" },
+    "bounds": {
+      "@minlat": 39.4929,
+      "@minlon": -84.7872,
+      "@maxlat": 39.5209,
+      "@maxlon": -84.6941
+    },
+    "node": [
+      {
+        "@id": 181846849,
+        "@lat": 39.5674443,
+        "@lon": -84.816105,
+        "@version": 5,
+        "@timestamp": "2019-02-24T08:16:29Z",
+        "@changeset": 67510357,
+        "@uid": 33757,
+        "@user": "Minh Nguyen",
+        "tag": { "@k": "railway", "@v": "level_crossing" }
+      },
+      {
+        "@id": 181846849,
+        "@lat": 39.5674443,
+        "@lon": -84.816105,
+        "@version": 5,
+        "@timestamp": "2019-02-24T08:16:29Z",
+        "@changeset": 67510357,
+        "@uid": 33757,
+        "@user": "Minh Nguyen",
+        "tag": { "@k": "railway", "@v": "level_crossing" }
+      }
+    ]
+  }
+}

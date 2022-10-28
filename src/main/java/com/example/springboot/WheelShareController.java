@@ -38,8 +38,8 @@ public class WheelShareController {
 		return "Health: 100%! The backend server is up and running!";
 	}
 
-	@PostMapping("/algorithm")
-	public List<MapNode> routeAlgo(@RequestParam float srcLon, @RequestParam float srcLat,
+	@PostMapping("/getRoute")
+	public List<MapNode> retrieveRoute(@RequestParam float srcLon, @RequestParam float srcLat,
 								   @RequestParam float destLon, @RequestParam float destLat) {
 
 		Map<Long, MapNode> nodeMap = mapService.getNodeMap();
@@ -55,6 +55,13 @@ public class WheelShareController {
 		}
 		// return
 		return result;
+	}
+
+	@GetMapping("/getClosestNode")
+	@ResponseBody
+	public Long retrieveClosestNode(@RequestParam float srcLon, @RequestParam float srcLat) {
+		return routeService.getClosestNode(srcLon, srcLat, mapService.getNodeMap());
+		// return srcLat;
 	}
 
 

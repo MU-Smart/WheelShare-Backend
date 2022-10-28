@@ -1,70 +1,98 @@
 package com.example.springboot.Services;
 
+import com.example.springboot.Models.MapEdge;
 import com.example.springboot.Models.MapNode;
-import com.example.springboot.Models.Utilities;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Set;
+
+import org.javatuples.Pair;
 
 @Service
-public class RouteServiceImpl implements RouteService{
+public class RouteServiceImpl implements RouteService {
+
     /**
-     * Given a particular location
-     * return the reference of the closest map node to the location
+     * Return the nearest node's id to the given longtitude and latitude
+     * 
      * @param longtitude
      * @param lattitude
      * @param refToNode
      * @return
      */
-    public Long getClosest(float longitude, float latitude, Map<Long, MapNode> refToNode) {
-        // Create a wrapping map node
-        MapNode node = new MapNode(0, 0, "", "", 0, latitude, longitude);
+    public Long getClosestNode(float longitude, float latitude, Map<Long, MapNode> nodeMap) {
+        long nearestNodeId = -1L;
+        double minDistance = Double.MAX_VALUE;
 
-        // Start comparing
-        long res = -1L;  // this is for debug
-        double smallestDist = Double.MAX_VALUE;
-        for (Map.Entry<Long, MapNode> entry : refToNode.entrySet()) {
-            double currDistance = Utilities.Distance(node, entry.getValue());
-            if (currDistance < smallestDist) {
-                smallestDist = currDistance;
-                res = entry.getKey();
+        for (long nodeId : nodeMap.keySet()) {
+            MapNode currNode = nodeMap.get(nodeId);
+            double currDistance = currNode.distanceTo(longitude, latitude);
+
+            if (currDistance < minDistance) {
+                minDistance = currDistance;
+                nearestNodeId = nodeId;
             }
         }
 
-        // Return result
-        return res;
+        return nearestNodeId;
     }
 
-    public Map<Long, List<Double>> getWeight(Map<Long, List<Long>> adj) {
-        // Prepare
-        Map<Long, List<Double>> res = new HashMap<Long, List<Double>>();
+    @Override
+    public List<Long> buildRoute(float srcLon, float srcLat, float destLon, float destLat,
+            Map<Long, MapNode> nodeMap, Map<Long, List<Long>> edgeMap,
+            Map<Pair<Long, Long>, Double> weightMap) {
 
-        // Getting the weight with same structure as adj
-        for (Map.Entry<Long, List<Long>> entry : adj.entrySet()) {
-            Long key = entry.getKey();
-            List<Long> neis = entry.getValue();
-            // create the same list with 0 value
-            List<Double> weights = Arrays.asList(new Double[neis.size()]);
-            // add to result
-            res.put(key, weights);
+        long startNodeId = getClosestNode(srcLon, srcLat, nodeMap);
+        long endNodeId = getClosestNode(destLon, destLat, nodeMap);
+
+        Map<Long, Long> preNodeMap = new HashMap<Long, Long>();
+        PriorityQueue<MapEdge> edgeHeap = new PriorityQueue<>();
+        Set<Long> visitedNodeSet = new HashSet<Long>();
+
+        visitedNodeSet.add(endNodeId);
+
+        for (long neighborNodeId : edgeMap.get(endNodeId)) {
+            Pair<Long, Long> currPair = new Pair<Long, Long>(endNodeId, neighborNodeId);
+            double weight = weightMap.get(currPair);
+            edgeHeap.add(new MapEdge(weight, endNodeId, neighborNodeId));
         }
 
-        // Result
-        return res;
+        while (!preNodeMap.containsKey(startNodeId) && !edgeHeap.isEmpty()) {
+            // Pop the max edge out
+            MapEdge maxEdge = edgeHeap.remove();
+            long nextNodeId = maxEdge.getEndNodeId();
+            long currNodeId = maxEdge.getStartNodeId();
+
+            if (visitedNodeSet.contains(nextNodeId)) {
+                continue;
+            }
+
+            preNodeMap.put(nextNodeId, currNodeId);
+
+            for (long neighborNodeId : edgeMap.get(nextNodeId)) {
+                Pair<Long, Long> currPair = new Pair<Long, Long>(nextNodeId, neighborNodeId);
+                double weight = weightMap.get(currPair);
+                edgeHeap.add(new MapEdge(weight, nextNodeId, neighborNodeId));
+            }
+        }
+
+        return getRoute(preNodeMap, startNodeId);
     }
-    @Override
-    public List<Long> getRoute(float srcLon, float srcLat, float destLon, float destLat,
-                                  Map<Long, MapNode> refToNode, Map<Long, List<Long>> adj) {
-        // prepare
-        Long start = getClosest(srcLon, srcLat, refToNode), end = getClosest(destLon, destLat, refToNode);
-        // weight map initialized to 0
-        Map<Long, List<Double>> weights = getWeight(adj);
-        // get help from graph algorithm
-        Graph graphAlgo = new Graph(start, end, refToNode, adj, weights);
-        // return
-        return graphAlgo.routeAlgo();
+
+    public List<Long> getRoute(Map<Long, Long> preNodeMap, long startNodeId) {
+        List<Long> result = new ArrayList<>();
+        long currNodeId = startNodeId;
+
+        while (preNodeMap.containsKey(currNodeId)) {
+            result.add(currNodeId);
+            startNodeId = preNodeMap.get(currNodeId);
+        }
+
+        return result;
     }
 }

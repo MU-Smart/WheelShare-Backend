@@ -21,4 +21,11 @@ public class MapNode {
     this.latitute = latitude;
     this.longtitude = longtitude;
   }
+
+  public double distanceTo(float lon, float lat) {
+    double distance = 1.00;
+    // TODO Implement the Haversine Formula
+    // * https://www.movable-type.co.uk/scripts/latlong.html
+    return distance;
+}
 }

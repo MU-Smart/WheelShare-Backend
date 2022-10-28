@@ -2,13 +2,15 @@ package com.example.springboot;
 
 import com.example.springboot.Models.MapNode;
 import com.example.springboot.Services.RouteServiceImpl;
+
+import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.springboot.Services.MapServiceBuilderImpl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,18 +41,20 @@ public class WheelShareController {
 	@PostMapping("/algorithm")
 	public List<MapNode> routeAlgo(@RequestParam float srcLon, @RequestParam float srcLat,
 								   @RequestParam float destLon, @RequestParam float destLat) {
-		// prepare
-		Map<Long, MapNode> refToNode = mapService.getNodeMap();
-		Map<Long, List<Long>> adj = mapService.getEdgeMap();
+
+		Map<Long, MapNode> nodeMap = mapService.getNodeMap();
+		Map<Long, List<Long>> edgeMap = mapService.getEdgeMap();
+		// TODO: Implement the function to generate the weightMap
+		Map<Pair<Long, Long>, Double> weightMap = new HashMap<>();
 		// get the result
-		List<Long> refNodes = routeService.getRoute(srcLon, srcLat, destLon, destLat, refToNode, adj);
+		List<Long> nodeIdRouteList = routeService.buildRoute(srcLon, srcLat, destLon, destLat, nodeMap, edgeMap, weightMap);
 		// convert
-		List<MapNode> res = new ArrayList<>();
-		for (Long ref : refNodes) {
-			res.add(refToNode.get(ref));
+		List<MapNode> result = new ArrayList<>();
+		for (Long nodeId : nodeIdRouteList) {
+			result.add(nodeMap.get(nodeId));
 		}
 		// return
-		return res;
+		return result;
 	}
 
 

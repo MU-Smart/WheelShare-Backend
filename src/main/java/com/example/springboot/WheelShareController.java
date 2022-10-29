@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import com.example.springboot.Services.MapServiceBuilderImpl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,20 +39,21 @@ public class WheelShareController {
 
 	@PostMapping("/getRoute")
 	public List<MapNode> retrieveRoute(@RequestParam double srcLon, @RequestParam double srcLat,
-								   @RequestParam double destLon, @RequestParam double destLat) {
+			@RequestParam double destLon, @RequestParam double destLat) {
 
 		Map<Long, MapNode> nodeMap = mapService.getNodeMap();
 		Map<Long, List<Long>> edgeMap = mapService.getEdgeMap();
-		// TODO: Implement the function to generate the weightMap
-		Map<Pair<Long, Long>, Double> weightMap = new HashMap<>();
-		// get the result
+		Map<Pair<Long, Long>, Double> weightMap = mapService.getWeightMap();
+
+		// * Route building
 		List<Long> nodeIdRouteList = routeService.buildRoute(srcLon, srcLat, destLon, destLat, nodeMap, edgeMap, weightMap);
-		// convert
+
+		// * Convert list of nodeId -> node
 		List<MapNode> result = new ArrayList<>();
 		for (Long nodeId : nodeIdRouteList) {
 			result.add(nodeMap.get(nodeId));
 		}
-		// return
+
 		return result;
 	}
 
@@ -62,6 +62,5 @@ public class WheelShareController {
 	public Long retrieveClosestNode(@RequestParam double srcLat, @RequestParam double srcLon) {
 		return routeService.getClosestNode(srcLat, srcLon, mapService.getNodeMap());
 	}
-
 
 }

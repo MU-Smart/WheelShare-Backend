@@ -14,6 +14,16 @@
     },
     "node": [
       {
+        "@id": 0,
+        "@lat": 0,
+        "@lon": 0,
+        "@version": 5,
+        "@timestamp": "2019-02-24T08:16:29Z",
+        "@changeset": 67510357,
+        "@uid": 33757,
+        "@user": "Minh Nguyen"
+      },
+      {
         "@id": 1,
         "@lat": 1,
         "@lon": 2,
@@ -25,13 +35,235 @@
       },
       {
         "@id": 2,
-        "@lat": 39.5674443,
-        "@lon": -84.816105,
+        "@lat": 3,
+        "@lon": 2,
         "@version": 5,
         "@timestamp": "2019-02-24T08:16:29Z",
         "@changeset": 67510357,
         "@uid": 33757,
         "@user": "Minh Nguyen"
+      },
+      {
+        "@id": 3,
+        "@lat": 4,
+        "@lon": -1,
+        "@version": 5,
+        "@timestamp": "2019-02-24T08:16:29Z",
+        "@changeset": 67510357,
+        "@uid": 33757,
+        "@user": "Minh Nguyen"
+      },
+      {
+        "@id": 4,
+        "@lat": 6,
+        "@lon": -1,
+        "@version": 5,
+        "@timestamp": "2019-02-24T08:16:29Z",
+        "@changeset": 67510357,
+        "@uid": 33757,
+        "@user": "Minh Nguyen"
+      },
+      {
+        "@id": 5,
+        "@lat": 5,
+        "@lon": 0,
+        "@version": 5,
+        "@timestamp": "2019-02-24T08:16:29Z",
+        "@changeset": 67510357,
+        "@uid": 33757,
+        "@user": "Minh Nguyen"
+      },
+      {
+        "@id": 6,
+        "@lat": 7,
+        "@lon": 2,
+        "@version": 5,
+        "@timestamp": "2019-02-24T08:16:29Z",
+        "@changeset": 67510357,
+        "@uid": 33757,
+        "@user": "Minh Nguyen"
+      },
+      {
+        "@id": 7,
+        "@lat": 1,
+        "@lon": -1,
+        "@version": 5,
+        "@timestamp": "2019-02-24T08:16:29Z",
+        "@changeset": 67510357,
+        "@uid": 33757,
+        "@user": "Minh Nguyen"
+      },
+      {
+        "@id": 8,
+        "@lat": 3,
+        "@lon": 1,
+        "@version": 5,
+        "@timestamp": "2019-02-24T08:16:29Z",
+        "@changeset": 67510357,
+        "@uid": 33757,
+        "@user": "Minh Nguyen"
+      },
+      {
+        "@id": 9,
+        "@lat": 3,
+        "@lon": -1,
+        "@version": 5,
+        "@timestamp": "2019-02-24T08:16:29Z",
+        "@changeset": 67510357,
+        "@uid": 33757,
+        "@user": "Minh Nguyen"
+      },
+      {
+        "@id": 10,
+        "@lat": 7,
+        "@lon": -1,
+        "@version": 5,
+        "@timestamp": "2019-02-24T08:16:29Z",
+        "@changeset": 67510357,
+        "@uid": 33757,
+        "@user": "Minh Nguyen"
+      }
+    ],
+    "way": [
+      {
+        "@id": 1,
+        "@version": 4,
+        "@timestamp": "2022-01-30T21:34:54Z",
+        "@changeset": 116797457,
+        "@uid": 11498183,
+        "@user": "Eiim",
+        "nd": [
+          { "@ref": 0 },
+          { "@ref": 1 }
+        ],
+        "tag": [
+          { "@k": "incline", "@v": 30 }
+        ]
+      },
+      {
+        "@id": 2,
+        "@version": 4,
+        "@timestamp": "2022-01-30T21:34:54Z",
+        "@changeset": 116797457,
+        "@uid": 11498183,
+        "@user": "Eiim",
+        "nd": [
+          { "@ref": 0 },
+          { "@ref": 7 }
+        ],
+        "tag": [
+          { "@k": "incline", "@v": 20 }
+        ]
+      },
+      {
+        "@id": 3,
+        "@version": 4,
+        "@timestamp": "2022-01-30T21:34:54Z",
+        "@changeset": 116797457,
+        "@uid": 11498183,
+        "@user": "Eiim",
+        "nd": [
+          { "@ref": 8 },
+          { "@ref": 7 }
+        ],
+        "tag": [
+          { "@k": "incline", "@v": 18 }
+        ]
+      },
+      {
+        "@id": 4,
+        "@version": 4,
+        "@timestamp": "2022-01-30T21:34:54Z",
+        "@changeset": 116797457,
+        "@uid": 11498183,
+        "@user": "Eiim",
+        "nd": [
+          { "@ref": 1 },
+          { "@ref": 2 },
+          { "@ref": 6 }
+        ],
+        "tag": [
+          { "@k": "incline", "@v": 25 }
+        ]
+      },
+      {
+        "@id": 5,
+        "@version": 4,
+        "@timestamp": "2022-01-30T21:34:54Z",
+        "@changeset": 116797457,
+        "@uid": 11498183,
+        "@user": "Eiim",
+        "nd": [
+          { "@ref": 2 },
+          { "@ref": 8 },
+          { "@ref": 9 }
+        ],
+        "tag": [
+          { "@k": "incline", "@v": 32 }
+        ]
+      },
+      {
+        "@id": 6,
+        "@version": 4,
+        "@timestamp": "2022-01-30T21:34:54Z",
+        "@changeset": 116797457,
+        "@uid": 11498183,
+        "@user": "Eiim",
+        "nd": [
+          { "@ref": 4 },
+          { "@ref": 3 },
+          { "@ref": 9 },
+          { "@ref": 10}
+        ],
+        "tag": [
+          { "@k": "incline", "@v": 2 }
+        ]
+      },
+      {
+        "@id": 7,
+        "@version": 4,
+        "@timestamp": "2022-01-30T21:34:54Z",
+        "@changeset": 116797457,
+        "@uid": 11498183,
+        "@user": "Eiim",
+        "nd": [
+          { "@ref": 3 },
+          { "@ref": 5 },
+          { "@ref": 6 }
+        ],
+        "tag": [
+          { "@k": "incline", "@v": 50 }
+        ]
+      },
+      {
+        "@id": 8,
+        "@version": 4,
+        "@timestamp": "2022-01-30T21:34:54Z",
+        "@changeset": 116797457,
+        "@uid": 11498183,
+        "@user": "Eiim",
+        "nd": [
+          { "@ref": 5 },
+          { "@ref": 10 }
+        ],
+        "tag": [
+          { "@k": "incline", "@v": 100 }
+        ]
+      },
+      {
+        "@id": 9,
+        "@version": 4,
+        "@timestamp": "2022-01-30T21:34:54Z",
+        "@changeset": 116797457,
+        "@uid": 11498183,
+        "@user": "Eiim",
+        "nd": [
+          { "@ref": 6 },
+          { "@ref": 10 }
+        ],
+        "tag": [
+          { "@k": "incline", "@v": 5 }
+        ]
       }
     ]
   }

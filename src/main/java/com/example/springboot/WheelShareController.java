@@ -32,12 +32,18 @@ public class WheelShareController {
 		return mapService.getEdgeMap().toString();
 	}
 
+	@GetMapping("/weightMap")
+	public String retrieveWeightMap() {
+		return mapService.getWeightMap().toString();
+	}
+
 	@GetMapping("/health")
 	public String healthCheck() {
 		return "Health: 100%! The backend server is up and running!";
 	}
 
-	@PostMapping("/getRoute")
+	@GetMapping("/getRoute")
+	@ResponseBody
 	public List<MapNode> retrieveRoute(@RequestParam double srcLon, @RequestParam double srcLat,
 			@RequestParam double destLon, @RequestParam double destLat) {
 

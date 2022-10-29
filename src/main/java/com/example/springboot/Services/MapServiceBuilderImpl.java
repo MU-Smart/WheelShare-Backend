@@ -153,7 +153,6 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 						}
 
 						// -----------------Weight Map Data Processing-----------------
-
 						Pair<Long, Long> startEndNodePair = new Pair<Long, Long>(startNode, endNode);
 						Pair<Long, Long> endStartNodePair = new Pair<Long, Long>(endNode, startNode);
 

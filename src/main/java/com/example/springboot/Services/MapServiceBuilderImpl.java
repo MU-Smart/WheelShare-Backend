@@ -87,14 +87,16 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 				 * * Check for the incline inside each way.
 				 * * If there is, set the weight var to that value
 				 * * If not, log out an error and increment the var unlabelledWayCount
+				 * ! Sometimes, the incline value existed but it is not parsable
 				 */
 				if (currWay.get("tag") == null) {
 					unlabelledWayCount++;
 					log.warn(String.format("Tag not available for this way: Id - %s", currWay.get("@id")));
 				} else {
-					// * Tag can be either null or an object or an array
+
 					String tagType = currWay.get("tag").getClass().toString();
 
+					// * Tag is a JSON Array
 					if (tagType.equals("class org.json.simple.JSONArray")) {
 						JSONArray tagList = (JSONArray) currWay.get("tag");
 						for (int index = 0; index < tagList.size(); index++) {
@@ -111,6 +113,7 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 						}
 					}
 
+					// * Tag is a JSON Array
 					if (tagType.equals("class org.json.simple.JSONObject")) {
 						JSONObject tagOject = (JSONObject) currWay.get("tag");
 						if (tagOject.get("@k").toString().equals("incline")) {

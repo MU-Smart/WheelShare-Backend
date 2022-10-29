@@ -2,6 +2,12 @@ package com.example.springboot.Services;
 
 import com.example.springboot.Models.MapEdge;
 import com.example.springboot.Models.MapNode;
+
+import ch.qos.logback.core.recovery.ResilientFileOutputStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,6 +22,7 @@ import org.javatuples.Pair;
 
 @Service
 public class RouteServiceImpl implements RouteService {
+    private static final Logger log = LoggerFactory.getLogger(RouteServiceImpl.class);
 
     /**
      * Return the nearest node's id to the given latitude and longtitude
@@ -46,8 +53,8 @@ public class RouteServiceImpl implements RouteService {
             Map<Long, MapNode> nodeMap, Map<Long, List<Long>> edgeMap,
             Map<Pair<Long, Long>, Double> weightMap) {
 
-        long startNodeId = getClosestNode(srcLon, srcLat, nodeMap);
-        long endNodeId = getClosestNode(destLon, destLat, nodeMap);
+        long startNodeId = getClosestNode(srcLat, srcLon, nodeMap);
+        long endNodeId = getClosestNode(destLat, destLon, nodeMap);
 
         Map<Long, Long> preNodeMap = new HashMap<Long, Long>();
         PriorityQueue<MapEdge> edgeHeap = new PriorityQueue<>();
@@ -72,26 +79,34 @@ public class RouteServiceImpl implements RouteService {
             }
 
             preNodeMap.put(nextNodeId, currNodeId);
+            visitedNodeSet.add(nextNodeId);
 
             for (long neighborNodeId : edgeMap.get(nextNodeId)) {
+                if (visitedNodeSet.contains(neighborNodeId)) {
+                    continue;
+                }
                 Pair<Long, Long> currPair = new Pair<Long, Long>(nextNodeId, neighborNodeId);
                 double weight = weightMap.get(currPair);
                 edgeHeap.add(new MapEdge(weight, nextNodeId, neighborNodeId));
             }
         }
-
-        return getRoute(preNodeMap, startNodeId);
+        
+        log.info("Done");
+        log.info(preNodeMap.toString());
+        return getRoute(preNodeMap, startNodeId, endNodeId);
     }
 
-    public List<Long> getRoute(Map<Long, Long> preNodeMap, long startNodeId) {
+    public List<Long> getRoute(Map<Long, Long> preNodeMap, long startNodeId, long endNodeId) {
         List<Long> result = new ArrayList<>();
         long currNodeId = startNodeId;
 
-        while (preNodeMap.containsKey(currNodeId)) {
+        while (currNodeId != endNodeId) {
             result.add(currNodeId);
-            startNodeId = preNodeMap.get(currNodeId);
+            currNodeId = preNodeMap.get(currNodeId);
         }
 
+        result.add(endNodeId);
+        
         return result;
     }
 }

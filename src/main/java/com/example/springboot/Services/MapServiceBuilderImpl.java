@@ -87,7 +87,8 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 				 * * Check for the incline inside each way.
 				 * * If there is, set the weight var to that value
 				 * * If not, log out an error and increment the var unlabelledWayCount
-				 * ! Sometimes, the incline value existed but it is not parsable -> Should have error checking for this
+				 * ! Sometimes, the incline value existed but it is not parsable -> Should have
+				 * error checking for this
 				 */
 				if (currWay.get("tag") == null) {
 					unlabelledWayCount++;
@@ -127,41 +128,41 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 					}
 				}
 
-				for (int startIndex = 0; startIndex < currWayNodeList.size(); startIndex++) {
+				for (int startIndex = 0; startIndex < currWayNodeList.size() - 1; startIndex++) {
 					// -----------------Edge Map Data Processing-----------------
 					JSONObject startNodeObj = (JSONObject) currWayNodeList.get(startIndex);
 					long startNode = Long.parseLong(startNodeObj.get("@ref").toString());
+					int endIndex = startIndex + 1;
+					
+					JSONObject endNodeObj = (JSONObject) currWayNodeList.get(endIndex);
+					long endNode = Long.parseLong(endNodeObj.get("@ref").toString());
 
-					for (int endIndex = startIndex + 1; endIndex < currWayNodeList.size(); endIndex++) {
-						JSONObject endNodeObj = (JSONObject) currWayNodeList.get(endIndex);
-						long endNode = Long.parseLong(endNodeObj.get("@ref").toString());
+					List<Long> startNodeList = edgeMap.get(startNode);
+					List<Long> endNodeList = edgeMap.get(endNode);
 
-						List<Long> startNodeList = edgeMap.get(startNode);
-						List<Long> endNodeList = edgeMap.get(endNode);
-
-						if (startNodeList == null) {
-							startNodeList = new ArrayList<Long>();
-							startNodeList.add(endNode);
-							edgeMap.put(startNode, startNodeList);
-						} else {
-							startNodeList.add(endNode);
-						}
-
-						if (endNodeList == null) {
-							endNodeList = new ArrayList<Long>();
-							endNodeList.add(startNode);
-							edgeMap.put(endNode, endNodeList);
-						} else {
-							endNodeList.add(startNode);
-						}
-
-						// -----------------Weight Map Data Processing-----------------
-						Pair<Long, Long> startEndNodePair = new Pair<Long, Long>(startNode, endNode);
-						Pair<Long, Long> endStartNodePair = new Pair<Long, Long>(endNode, startNode);
-
-						weightMap.put(startEndNodePair, weight);
-						weightMap.put(endStartNodePair, weight);
+					if (startNodeList == null) {
+						startNodeList = new ArrayList<Long>();
+						startNodeList.add(endNode);
+						edgeMap.put(startNode, startNodeList);
+					} else {
+						startNodeList.add(endNode);
 					}
+
+					if (endNodeList == null) {
+						endNodeList = new ArrayList<Long>();
+						endNodeList.add(startNode);
+						edgeMap.put(endNode, endNodeList);
+					} else {
+						endNodeList.add(startNode);
+					}
+
+					// -----------------Weight Map Data Processing-----------------
+					Pair<Long, Long> startEndNodePair = new Pair<Long, Long>(startNode, endNode);
+					Pair<Long, Long> endStartNodePair = new Pair<Long, Long>(endNode, startNode);
+
+					weightMap.put(startEndNodePair, weight);
+					weightMap.put(endStartNodePair, weight);
+					
 				}
 			}
 

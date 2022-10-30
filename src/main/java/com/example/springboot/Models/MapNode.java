@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class MapNode {
+  private long nodeId;
   private int version;
   private long changeSet;
   private String timeStamp;
@@ -12,8 +13,9 @@ public class MapNode {
   private double latitute;
   private double longtitude;
 
-  public MapNode(int version, long changeSet, String timeStamp, String user, long userId, double latitude,
+  public MapNode(long nodeId, int version, long changeSet, String timeStamp, String user, long userId, double latitude,
       double longtitude) {
+    this.nodeId = nodeId;
     this.version = version;
     this.changeSet = changeSet;
     this.timeStamp = timeStamp;

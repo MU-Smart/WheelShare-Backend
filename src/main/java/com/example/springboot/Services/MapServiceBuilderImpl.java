@@ -70,7 +70,7 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 					throw new InvalidMetadataException(
 							String.format("Duplicate node id Exception: Node %d. Please check the input files for errors.", nodeId));
 				}
-				MapNode mapNode = new MapNode(version, changeSet, timestamp, user, userId, latitude, longtitude);
+				MapNode mapNode = new MapNode(nodeId, version, changeSet, timestamp, user, userId, latitude, longtitude);
 				nodeMap.put(nodeId, mapNode);
 			}
 
@@ -187,5 +187,9 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 
 	public Map<Pair<Long, Long>, Double> getWeightMap() {
 		return weightMap;
+	}
+
+	public MapNode getNode(long nodeId)	{
+		return nodeMap.get(nodeId);
 	}
 }

@@ -3,11 +3,6 @@ package com.example.springboot.Services;
 import com.example.springboot.Models.MapEdge;
 import com.example.springboot.Models.MapNode;
 
-import ch.qos.logback.core.recovery.ResilientFileOutputStream;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,14 +17,13 @@ import org.javatuples.Pair;
 
 @Service
 public class RouteServiceImpl implements RouteService {
-    private static final Logger log = LoggerFactory.getLogger(RouteServiceImpl.class);
 
     /**
      * Return the nearest node's id to the given latitude and longtitude
      * 
-     * @param latitude
-     * @param longtitude
-     * @param nodeMap
+     * @param latitude the latitude of the node
+     * @param longtitude the longtitude of the node
+     * @param nodeMap the hashmap containing the node
      * @return
      */
     public Long getClosestNode(double latitude, double longitude, Map<Long, MapNode> nodeMap) {
@@ -48,8 +42,16 @@ public class RouteServiceImpl implements RouteService {
         return nearestNodeId;
     }
 
+    /**
+     * Build the route given two coordinates using the algorithm from our research project
+     * 
+     * @param srcLat latitude of source
+     * @param srcLon longtitude of source
+     * @param destLat latitude of destination
+     * @param destLon longtitude of destination
+     */
     @Override
-    public List<Long> buildRoute(double srcLat, double srcLon, double destLon, double destLat,
+    public List<Long> buildRoute(double srcLat, double srcLon, double destLat, double destLon,
             Map<Long, MapNode> nodeMap, Map<Long, List<Long>> edgeMap,
             Map<Pair<Long, Long>, Double> weightMap) {
 
@@ -90,12 +92,16 @@ public class RouteServiceImpl implements RouteService {
                 edgeHeap.add(new MapEdge(weight, nextNodeId, neighborNodeId));
             }
         }
-        
-        log.info("Done");
-        log.info(preNodeMap.toString());
         return getRoute(preNodeMap, startNodeId, endNodeId);
     }
 
+    /**
+     * Build the whole path from start to end using the preNode map
+     * 
+     * @param preNodeMap the map containing the node as key and nextNode is value
+     * @param startNodeId id of the start node
+     * @param endNodeId id of the end node
+     */
     public List<Long> getRoute(Map<Long, Long> preNodeMap, long startNodeId, long endNodeId) {
         List<Long> result = new ArrayList<>();
         long currNodeId = startNodeId;
@@ -106,7 +112,6 @@ public class RouteServiceImpl implements RouteService {
         }
 
         result.add(endNodeId);
-        
         return result;
     }
 }

@@ -65,8 +65,9 @@ public class WheelShareController {
 
 	@GetMapping("/getClosestNode")
 	@ResponseBody
-	public Long retrieveClosestNode(@RequestParam double srcLat, @RequestParam double srcLon) {
-		return routeService.getClosestNode(srcLat, srcLon, mapService.getNodeMap());
+	public MapNode retrieveClosestNode(@RequestParam double srcLat, @RequestParam double srcLon) {
+		Long nodeId = routeService.getClosestNode(srcLat, srcLon, mapService.getNodeMap());
+		return mapService.getNodeMap().get(nodeId);
 	}
 
 }

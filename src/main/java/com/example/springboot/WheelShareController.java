@@ -69,5 +69,4 @@ public class WheelShareController {
 		Long nodeId = routeService.getClosestNode(srcLat, srcLon, mapService.getNodeMap());
 		return mapService.getNodeMap().get(nodeId);
 	}
-
 }

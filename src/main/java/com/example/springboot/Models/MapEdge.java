@@ -17,9 +17,9 @@ public class MapEdge implements Comparable<MapEdge> {
   @Override
   public int compareTo(MapEdge other) {
     if (this.weight < other.weight) {
-      return -1;
-    } else if (this.weight > other.weight)  {
       return 1;
+    } else if (this.weight > other.weight)  {
+      return -1;
     } else  {
       return 0;
     }

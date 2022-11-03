@@ -9,7 +9,7 @@ import org.javatuples.Pair;
 public interface RouteService {
     Long getClosestNode(double latitude, double longitude, Map<Long, MapNode> nodeMap);
 
-    List<Long> buildRoute (double srcLon, double srcLat, double destLon, double destLat,
+    List<Long> buildRoute (double srcLat, double srcLon, double destLat, double destLon,
                            Map<Long, MapNode> nodeMap, Map<Long, List<Long>> edgeMap, 
                            Map<Pair<Long, Long>, Double> weightMap);
     

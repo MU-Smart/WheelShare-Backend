@@ -25,7 +25,7 @@ public class MapNode {
     this.longtitude = longtitude;
   }
 
-  public double distanceTo(double lon, double lat) {
+  public double distanceTo(double lat, double lon) {
     // * https://www.movable-type.co.uk/scripts/latlong.html
 
     double dLat = Math.toRadians(lat - this.latitute);

@@ -31,10 +31,12 @@ public class RouteServiceImpl implements RouteService {
 
         for (long nodeId : nodeMap.keySet()) {
             MapNode currNode = nodeMap.get(nodeId);
-            double currDistance = currNode.distanceTo(longitude, latitude);
+            double currDistance = currNode.distanceTo(latitude, longitude);
 
             if (currDistance < minDistance) {
                 minDistance = currDistance;
+                nearestNodeId = nodeId;
+            }   else if (currDistance == minDistance && nodeId < nearestNodeId)   {
                 nearestNodeId = nodeId;
             }
         }
@@ -56,6 +58,7 @@ public class RouteServiceImpl implements RouteService {
 
         long startNodeId = getClosestNode(srcLat, srcLon, nodeMap);
         long endNodeId = getClosestNode(destLat, destLon, nodeMap);
+
 
         Map<Long, Long> preNodeMap = new HashMap<Long, Long>();
         PriorityQueue<MapEdge> edgeHeap = new PriorityQueue<>();
@@ -91,6 +94,7 @@ public class RouteServiceImpl implements RouteService {
                 edgeHeap.add(new MapEdge(weight, nextNodeId, neighborNodeId));
             }
         }
+
         return getRoute(preNodeMap, startNodeId, endNodeId);
     }
 

@@ -44,8 +44,7 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 			JSONObject jsonObject = (JSONObject) jsonFileObject;
 
 			// * Clean up all of the hashmaps to put new data in
-			// ?: Is there any way we can pull new data in without having to clear the
-			// hashmaps?
+			// ?: Is there any way we can pull new data in without having to clear the hashmaps each time?
 			nodeMap.clear();
 			edgeMap.clear();
 			weightMap.clear();

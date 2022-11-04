@@ -16,18 +16,12 @@ public class MapEdge implements Comparable<MapEdge> {
 
   @Override
   public int compareTo(MapEdge other) {
-    if (this.weight < other.weight) {
+    if (this.weight > other.weight) {
       return 1;
-    } else if (this.weight > other.weight)  {
+    } else if (this.weight < other.weight)  {
       return -1;
     } else  {
       return 0;
     }
   }
-
-  @Override
-  public String toString() {
-      return String.format("(%f, %d, %d)", weight, startNodeId, endNodeId);
-  }
-
 }

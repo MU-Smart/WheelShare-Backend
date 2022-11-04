@@ -26,7 +26,7 @@ public class RouteServiceTest {
   private Map<Long, MapNode> nodeMapTest = new HashMap<>();
   private Map<Long, List<Long>> edgeMapTest = new HashMap<>();
   private Map<Pair<Long, Long>, Double> weightMapTest = new HashMap<>();
-  private Map<Long, Long> preNodeMap;
+  private Map<Long, Long> preNodeMap = new HashMap<>();
   
 
   @Before
@@ -110,6 +110,19 @@ public class RouteServiceTest {
     weightMapTest.put(new Pair<Long,Long>(10L, 6L), 5.0);
     weightMapTest.put(new Pair<Long,Long>(5L, 10L), 5.0);
     weightMapTest.put(new Pair<Long,Long>(10L, 5L), 100.0);
+
+    // init data for the preNode map
+    // 1 -> 2, 2 -> 5, 5 -> 6, 6 -> 9, 9 -> 3, 3 -> 4, 10 -> 0, 0 -> 5
+    preNodeMap.put(1L, 2L);
+    preNodeMap.put(2L, 5L);
+    preNodeMap.put(5L, 6L);
+    preNodeMap.put(6L, 9L);
+    preNodeMap.put(6L, 9L);
+    preNodeMap.put(9L, 3L);
+    preNodeMap.put(3L, 4L);
+    preNodeMap.put(10L, 0L);
+    preNodeMap.put(0L, 5L);
+
   }
 
   @Autowired
@@ -144,5 +157,17 @@ public class RouteServiceTest {
     // path from node 4 to node 3
     List<Long> expected3 = Arrays.asList(4L,10L,5L,3L);
     assertEquals(expected3, routeService.buildRoute(6, -1, 4, -1, nodeMapTest, edgeMapTest, weightMapTest));
+  }
+
+  @Test
+  public void getRouteTest() {
+    // path from node 1 to node 3
+    List<Long> expected1 = Arrays.asList(1L,2L,5L,6L,9L,3L);
+    assertEquals(expected1, routeService.getRoute(preNodeMap, 1L, 3L));
+
+    // path from node 10 to node 4
+    List<Long> expected2 = Arrays.asList(10L,0L,5L,6L,9L,3L,4L);
+    assertEquals(expected2, routeService.getRoute(preNodeMap, 10L, 4L));
+    
   }
 }

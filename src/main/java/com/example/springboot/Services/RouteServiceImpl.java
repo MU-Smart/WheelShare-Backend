@@ -59,7 +59,6 @@ public class RouteServiceImpl implements RouteService {
         long startNodeId = getClosestNode(srcLat, srcLon, nodeMap);
         long endNodeId = getClosestNode(destLat, destLon, nodeMap);
 
-
         Map<Long, Long> preNodeMap = new HashMap<Long, Long>();
         PriorityQueue<MapEdge> edgeHeap = new PriorityQueue<>();
         Set<Long> visitedNodeSet = new HashSet<Long>();

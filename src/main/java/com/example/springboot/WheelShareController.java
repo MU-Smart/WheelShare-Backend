@@ -5,7 +5,9 @@ import com.example.springboot.Services.RouteServiceImpl;
 
 import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.springboot.Services.MapServiceBuilderImpl;
 
@@ -23,17 +25,17 @@ public class WheelShareController {
 	private RouteServiceImpl routeService;
 
 	@GetMapping("/nodeMap")
-	public String retrieveNodeMap() {
+	public String getNodeMap() {
 		return mapService.getNodeMap().toString();
 	}
 
 	@GetMapping("/edgeMap")
-	public String retrieveEdgeMap() {
+	public String getEdgeMap() {
 		return mapService.getEdgeMap().toString();
 	}
 
 	@GetMapping("/weightMap")
-	public String retrieveWeightMap() {
+	public String getWeightMap() {
 		return mapService.getWeightMap().toString();
 	}
 
@@ -44,15 +46,15 @@ public class WheelShareController {
 
 	@GetMapping("/getRoute")
 	@ResponseBody
-	public List<MapNode> retrieveRoute(@RequestParam double srcLon, @RequestParam double srcLat,
-			@RequestParam double destLon, @RequestParam double destLat) {
+	public List<MapNode> getRoute(@RequestParam double srcLat, @RequestParam double srcLon,
+	@RequestParam double destLat, @RequestParam double destLon) {
 
 		Map<Long, MapNode> nodeMap = mapService.getNodeMap();
 		Map<Long, List<Long>> edgeMap = mapService.getEdgeMap();
 		Map<Pair<Long, Long>, Double> weightMap = mapService.getWeightMap();
 
 		// * Route building
-		List<Long> nodeIdRouteList = routeService.buildRoute(srcLon, srcLat, destLon, destLat, nodeMap, edgeMap, weightMap);
+		List<Long> nodeIdRouteList = routeService.buildRoute(srcLat, srcLon, destLat, destLon, nodeMap, edgeMap, weightMap);
 
 		// * Convert list of nodeId -> node
 		List<MapNode> result = new ArrayList<>();
@@ -63,9 +65,30 @@ public class WheelShareController {
 		return result;
 	}
 
+	@GetMapping("/getNodeNeighbors")
+	@ResponseBody
+	public List<Long> getNodeNeighborsByCoor(@RequestParam double srcLat, @RequestParam double srcLon) {
+		Long nodeId = routeService.getClosestNode(srcLat, srcLon, mapService.getNodeMap());
+		return mapService.getEdgeMap().get(nodeId);
+	}
+
+	@GetMapping("/getEdgeWeight")
+	@ResponseBody
+	public Double getNo(@RequestParam double srcLat, @RequestParam double srcLon, @RequestParam double desLat, @RequestParam double desLon) {
+		Long startNodeId = routeService.getClosestNode(srcLat, srcLon, mapService.getNodeMap());
+		Long endNodeId = routeService.getClosestNode(desLat, desLon, mapService.getNodeMap());
+
+		Pair<Long, Long> nodePair = new Pair<Long, Long>(startNodeId, endNodeId);
+
+		if (!mapService.getWeightMap().containsKey(nodePair))	{
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Node pair not found");
+		}
+		return mapService.getWeightMap().get(nodePair);
+	}
+
 	@GetMapping("/getClosestNode")
 	@ResponseBody
-	public MapNode retrieveClosestNode(@RequestParam double srcLat, @RequestParam double srcLon) {
+	public MapNode getClosestNode(@RequestParam double srcLat, @RequestParam double srcLon) {
 		Long nodeId = routeService.getClosestNode(srcLat, srcLon, mapService.getNodeMap());
 		return mapService.getNodeMap().get(nodeId);
 	}

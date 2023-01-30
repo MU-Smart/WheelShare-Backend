@@ -6,7 +6,6 @@ import com.example.springboot.Models.MapNode;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -62,7 +61,7 @@ public class RouteServiceImpl implements RouteService {
 
 
         Map<Long, Long> preNodeMap = new HashMap<Long, Long>();
-        PriorityQueue<MapEdge> edgeHeap = new PriorityQueue<>(Collections.reverseOrder());
+        PriorityQueue<MapEdge> edgeHeap = new PriorityQueue<>();
         Set<Long> visitedNodeSet = new HashSet<Long>();
 
         visitedNodeSet.add(endNodeId);

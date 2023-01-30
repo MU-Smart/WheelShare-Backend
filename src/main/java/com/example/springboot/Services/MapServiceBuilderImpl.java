@@ -38,9 +38,8 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 			log.info(absoluteFilePath);
 
 			// * Read the file in
-			Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath + "/src/main/resources/sample-map.json"));
-			// Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath +
-			// "/routing/mapData.json"));
+			Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath + "/src/main/resources/mapData.json"));
+			// Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath + "/routing/mapData.json"));
 			JSONObject jsonObject = (JSONObject) jsonFileObject;
 
 			// * Clean up all of the hashmaps to put new data in
@@ -86,8 +85,7 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 				 * * Check for the incline inside each way.
 				 * * If there is, set the weight var to that value
 				 * * If not, log out an error and increment the var unlabelledWayCount
-				 * ! Sometimes, the incline value existed but it is not parsable -> Should have
-				 * error checking for this
+				 * ! Sometimes, the incline value existed but it is not parsable -> Should have error checking for this
 				 */
 				if (currWay.get("tag") == null) {
 					unlabelledWayCount++;

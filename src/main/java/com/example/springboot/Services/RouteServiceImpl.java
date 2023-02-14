@@ -5,6 +5,9 @@ import com.example.springboot.Models.MapNode;
 
 import org.springframework.stereotype.Service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,7 +19,7 @@ import org.javatuples.Pair;
 
 @Service
 public class RouteServiceImpl implements RouteService {
-
+    private static final Logger log = LoggerFactory.getLogger(RouteServiceImpl.class);
     /**
      * Return the nearest node's id to the given latitude and longtitude
      * 
@@ -115,5 +118,67 @@ public class RouteServiceImpl implements RouteService {
 
         result.add(endNodeId);
         return result;
+    }
+
+    public List<List<Long>> test(double srcLat, double srcLon, double destLat, double destLon,
+    Map<Long, MapNode> nodeMap, Map<Long, List<Long>> edgeMap,
+    Map<Pair<Long, Long>, Double> weightMap) {
+        List<List<Long>> multiPathResult = new ArrayList<>();
+
+        long startNodeId = getClosestNode(srcLat, srcLon, nodeMap);
+        long endNodeId = getClosestNode(destLat, destLon, nodeMap);
+        MapNode startNode = nodeMap.get(startNodeId);
+        MapNode endNode = nodeMap.get(endNodeId);
+
+        double centerLatitude = (startNode.getLatitute() + endNode.getLatitute()) / 2;
+        double centerLongtitude = (startNode.getLongtitude() + endNode.getLongtitude()) / 2;
+        double radius = 2 * Math.max(startNode.distanceTo(centerLatitude, centerLongtitude), endNode.distanceTo(centerLatitude, centerLongtitude));
+        // log.info(Double.toString(radius));
+        // log.info(Double.toString(nodeMap.get(7213516553L).distanceTo(centerLatitude, centerLongtitude)));
+
+        Set<Long> nodeSet = new HashSet<>();
+        List<Long> currentPath = new ArrayList<>();
+        test2(multiPathResult, edgeMap, nodeMap, currentPath, nodeSet, startNodeId, endNodeId, radius, centerLatitude, centerLongtitude);
+        log.info("-----------------");
+        log.info(multiPathResult.toString());
+        log.info("-----------------");
+        return multiPathResult;
+    }
+
+    public void test2(List<List<Long>> multiPathResult, Map<Long, List<Long>> map, Map<Long, MapNode> nodeMap,
+    List<Long> currentPath, Set<Long> visited, long currNodeId, long endNodeId, 
+    double radius, double centerLatitude, double centerLongtitude)  {
+        currentPath.add(currNodeId);
+        visited.add(currNodeId);
+        if (currNodeId == endNodeId)    {
+            log.info(currentPath.toString());
+            List<Long> resultPath = new ArrayList<>();
+
+            for (Long nodeId : currentPath) {
+                resultPath.add(nodeId);
+            }
+            multiPathResult.add(resultPath);
+
+            visited.remove(currNodeId);
+            currentPath.remove(currentPath.size() - 1);
+            return;
+        }
+        
+        List<Long> neighborList = map.get(currNodeId);
+
+        for (long neighbor : neighborList)  {
+            MapNode neighborNode = nodeMap.get(neighbor);
+            if (neighborNode.distanceTo(centerLatitude, centerLongtitude) > radius) {
+                log.info(Long.toString(neighborNode.getNodeId()));
+                continue;
+            }
+            if (visited.contains(neighbor))    {
+                continue;
+            }
+            test2(multiPathResult, map, nodeMap, currentPath, visited, neighbor, endNodeId, radius, centerLatitude, centerLongtitude);
+        }
+
+        visited.remove(currNodeId);
+        currentPath.remove(currentPath.size() - 1);
     }
 }

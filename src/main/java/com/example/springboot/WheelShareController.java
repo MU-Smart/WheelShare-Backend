@@ -92,4 +92,15 @@ public class WheelShareController {
 		Long nodeId = routeService.getClosestNode(srcLat, srcLon, mapService.getNodeMap());
 		return mapService.getNodeMap().get(nodeId);
 	}
+
+	@GetMapping("/test")
+	@ResponseBody
+	public List<List<Long>> test(@RequestParam double srcLat, @RequestParam double srcLon,
+	@RequestParam double destLat, @RequestParam double destLon) {
+		Map<Long, MapNode> nodeMap = mapService.getNodeMap();
+		Map<Long, List<Long>> edgeMap = mapService.getEdgeMap();
+		Map<Pair<Long, Long>, Double> weightMap = mapService.getWeightMap();
+
+		return routeService.test(srcLat, srcLon, destLat, destLon, nodeMap, edgeMap, weightMap);
+	}
 }

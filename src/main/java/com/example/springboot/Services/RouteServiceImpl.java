@@ -55,9 +55,8 @@ public class RouteServiceImpl implements RouteService {
      * @param destLon longtitude of destination
      */
     @Override
-    public List<Long> buildRoute(double srcLat, double srcLon, double destLat, double destLon,
-            Map<Long, MapNode> nodeMap, Map<Long, List<Long>> edgeMap,
-            Map<Pair<Long, Long>, Double> weightMap) {
+    public List<Long> buildSingleRoute(double srcLat, double srcLon, double destLat, double destLon,
+            Map<Long, MapNode> nodeMap, Map<Long, List<Long>> edgeMap, Map<Pair<Long, Long>, Double> weightMap) {
 
         long startNodeId = getClosestNode(srcLat, srcLon, nodeMap);
         long endNodeId = getClosestNode(destLat, destLon, nodeMap);
@@ -97,7 +96,7 @@ public class RouteServiceImpl implements RouteService {
             }
         }
 
-        return getRoute(preNodeMap, startNodeId, endNodeId);
+        return getSingleRoute(preNodeMap, startNodeId, endNodeId);
     }
 
     /**
@@ -107,7 +106,7 @@ public class RouteServiceImpl implements RouteService {
      * @param startNodeId id of the start node
      * @param endNodeId id of the end node
      */
-    public List<Long> getRoute(Map<Long, Long> preNodeMap, long startNodeId, long endNodeId) {
+    public List<Long> getSingleRoute(Map<Long, Long> preNodeMap, long startNodeId, long endNodeId) {
         List<Long> result = new ArrayList<>();
         long currNodeId = startNodeId;
 
@@ -120,9 +119,19 @@ public class RouteServiceImpl implements RouteService {
         return result;
     }
 
-    public List<List<Long>> test(double srcLat, double srcLon, double destLat, double destLon,
-    Map<Long, MapNode> nodeMap, Map<Long, List<Long>> edgeMap,
-    Map<Pair<Long, Long>, Double> weightMap) {
+    /**
+     * Generate all possible routes given 2 coordinates
+     * Since this function uses recursion, we have to have a boundary to limit the search space
+     * The boundary would be a circle defined by the distance between the 2 start and end node with the radius coefficient
+     * 
+     * @param srcLat latitude of source
+     * @param srcLon longtitude of source
+     * @param destLat latitude of destination
+     * @param destLon longtitude of destination
+     * @param radiusCoefficient the coefficient to decide how big the circle boundary is
+     */
+    public List<List<Long>> buildMultipleRoute(double srcLat, double srcLon, double destLat, double destLon, double radiusCoefficent, 
+    Map<Long, MapNode> nodeMap, Map<Long, List<Long>> edgeMap, Map<Pair<Long, Long>, Double> weightMap) {
         List<List<Long>> multiPathResult = new ArrayList<>();
 
         long startNodeId = getClosestNode(srcLat, srcLon, nodeMap);
@@ -132,24 +141,31 @@ public class RouteServiceImpl implements RouteService {
 
         double centerLatitude = (startNode.getLatitute() + endNode.getLatitute()) / 2;
         double centerLongtitude = (startNode.getLongtitude() + endNode.getLongtitude()) / 2;
-        double radius = 2 * Math.max(startNode.distanceTo(centerLatitude, centerLongtitude), endNode.distanceTo(centerLatitude, centerLongtitude));
-        // log.info(Double.toString(radius));
-        // log.info(Double.toString(nodeMap.get(7213516553L).distanceTo(centerLatitude, centerLongtitude)));
-
+        // Have to do Math.max since the distance from the center to the startNode and endNode can be different
+        double radius = radiusCoefficent * Math.max(startNode.distanceTo(centerLatitude, centerLongtitude), endNode.distanceTo(centerLatitude, centerLongtitude));
+        
         Set<Long> nodeSet = new HashSet<>();
         List<Long> currentPath = new ArrayList<>();
-        test2(multiPathResult, edgeMap, nodeMap, currentPath, nodeSet, startNodeId, endNodeId, radius, centerLatitude, centerLongtitude);
-        log.info("-----------------");
-        log.info(multiPathResult.toString());
-        log.info("-----------------");
+        multipleRouteRecursion(startNodeId, endNodeId, radius, centerLatitude, centerLongtitude, edgeMap, nodeMap, multiPathResult, currentPath, nodeSet);
         return multiPathResult;
     }
 
-    public void test2(List<List<Long>> multiPathResult, Map<Long, List<Long>> map, Map<Long, MapNode> nodeMap,
-    List<Long> currentPath, Set<Long> visited, long currNodeId, long endNodeId, 
-    double radius, double centerLatitude, double centerLongtitude)  {
+    /**
+     * Backtracking helper function to perform the DFS search
+     * 
+     * @param srcLat latitude of source
+     * @param srcLon longtitude of source
+     * @param destLat latitude of destination
+     * @param destLon longtitude of destination
+     * @param radiusCoefficient the coefficient to decide how big the circle boundary is
+     */
+
+    public void multipleRouteRecursion(long currNodeId, long endNodeId,  double radius, double centerLatitude, 
+    double centerLongtitude, Map<Long, List<Long>> edgeMap, Map<Long, MapNode> nodeMap, List<List<Long>> multiPathResult, 
+    List<Long> currentPath, Set<Long> visited)  {
         currentPath.add(currNodeId);
         visited.add(currNodeId);
+
         if (currNodeId == endNodeId)    {
             log.info(currentPath.toString());
             List<Long> resultPath = new ArrayList<>();
@@ -164,7 +180,7 @@ public class RouteServiceImpl implements RouteService {
             return;
         }
         
-        List<Long> neighborList = map.get(currNodeId);
+        List<Long> neighborList = edgeMap.get(currNodeId);
 
         for (long neighbor : neighborList)  {
             MapNode neighborNode = nodeMap.get(neighbor);
@@ -175,7 +191,7 @@ public class RouteServiceImpl implements RouteService {
             if (visited.contains(neighbor))    {
                 continue;
             }
-            test2(multiPathResult, map, nodeMap, currentPath, visited, neighbor, endNodeId, radius, centerLatitude, centerLongtitude);
+            multipleRouteRecursion(neighbor, endNodeId, radius, centerLatitude, centerLongtitude, edgeMap, nodeMap, multiPathResult, currentPath, visited);
         }
 
         visited.remove(currNodeId);

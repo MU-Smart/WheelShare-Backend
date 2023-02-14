@@ -44,7 +44,7 @@ public class WheelShareController {
 		return "Health: 100%! The backend server is up and running!";
 	}
 
-	@GetMapping("/getRoute")
+	@GetMapping("/getSingleRoute")
 	@ResponseBody
 	public List<MapNode> getRoute(@RequestParam double srcLat, @RequestParam double srcLon,
 	@RequestParam double destLat, @RequestParam double destLon) {
@@ -54,7 +54,7 @@ public class WheelShareController {
 		Map<Pair<Long, Long>, Double> weightMap = mapService.getWeightMap();
 
 		// * Route building
-		List<Long> nodeIdRouteList = routeService.buildRoute(srcLat, srcLon, destLat, destLon, nodeMap, edgeMap, weightMap);
+		List<Long> nodeIdRouteList = routeService.buildSingleRoute(srcLat, srcLon, destLat, destLon, nodeMap, edgeMap, weightMap);
 
 		// * Convert list of nodeId -> node
 		List<MapNode> result = new ArrayList<>();
@@ -63,6 +63,17 @@ public class WheelShareController {
 		}
 
 		return result;
+	}
+
+	@GetMapping("/getMultipleRoute")
+	@ResponseBody
+	public List<List<Long>> test(@RequestParam double srcLat, @RequestParam double srcLon,
+	@RequestParam double destLat, @RequestParam double destLon) {
+		Map<Long, MapNode> nodeMap = mapService.getNodeMap();
+		Map<Long, List<Long>> edgeMap = mapService.getEdgeMap();
+		Map<Pair<Long, Long>, Double> weightMap = mapService.getWeightMap();
+
+		return routeService.buildMultipleRoute(srcLat, srcLon, destLat, destLon, 1.5, nodeMap, edgeMap, weightMap);
 	}
 
 	@GetMapping("/getNodeNeighbors")
@@ -91,16 +102,5 @@ public class WheelShareController {
 	public MapNode getClosestNode(@RequestParam double srcLat, @RequestParam double srcLon) {
 		Long nodeId = routeService.getClosestNode(srcLat, srcLon, mapService.getNodeMap());
 		return mapService.getNodeMap().get(nodeId);
-	}
-
-	@GetMapping("/test")
-	@ResponseBody
-	public List<List<Long>> test(@RequestParam double srcLat, @RequestParam double srcLon,
-	@RequestParam double destLat, @RequestParam double destLon) {
-		Map<Long, MapNode> nodeMap = mapService.getNodeMap();
-		Map<Long, List<Long>> edgeMap = mapService.getEdgeMap();
-		Map<Pair<Long, Long>, Double> weightMap = mapService.getWeightMap();
-
-		return routeService.test(srcLat, srcLon, destLat, destLon, nodeMap, edgeMap, weightMap);
 	}
 }

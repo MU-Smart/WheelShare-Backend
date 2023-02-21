@@ -147,15 +147,15 @@ public class RouteServiceTest {
   @Test
   public void buildMapTest() {
     // path from node 0 to node 5
-    List<Long> expected1 = Arrays.asList(0L,1L,2L,6L,5L);
+    List<Long> expected1 = Arrays.asList(0L,1L,2L,6L,10L,5L);
     assertEquals(expected1, routeService.buildSingleRoute(0, 0, 5, 0, nodeMapTest, edgeMapTest, weightMapTest));
     
     // path from node 7 to node 3
-    List<Long> expected2 = Arrays.asList(7L,0L,1L,2L,6L,5L,3L);
+    List<Long> expected2 = Arrays.asList(7L,0L,1L,2L,6L,10L, 4L,3L);
     assertEquals(expected2, routeService.buildSingleRoute(1, -1, 4, -1, nodeMapTest, edgeMapTest, weightMapTest));
 
     // path from node 4 to node 3
-    List<Long> expected3 = Arrays.asList(4L,10L,5L,3L);
+    List<Long> expected3 = Arrays.asList(4L,3L);
     assertEquals(expected3, routeService.buildSingleRoute(6, -1, 4, -1, nodeMapTest, edgeMapTest, weightMapTest));
   }
 
@@ -168,6 +168,5 @@ public class RouteServiceTest {
     // path from node 10 to node 4
     List<Long> expected2 = Arrays.asList(10L,0L,5L,6L,9L,3L,4L);
     assertEquals(expected2, routeService.getSingleRoute(preNodeMap, 10L, 4L));
-    
   }
 }

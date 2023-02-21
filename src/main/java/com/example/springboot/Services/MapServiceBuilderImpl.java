@@ -38,8 +38,8 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 			log.info(absoluteFilePath);
 
 			// * Read the file in
-			Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath + "/src/main/resources/mapData.json"));
-			// Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath + "/routing/mapData.json"));
+			// Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath + "/src/main/resources/mapData.json"));
+			Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath + "/routing/mapData.json"));
 			JSONObject jsonObject = (JSONObject) jsonFileObject;
 
 			// * Clean up all of the hashmaps to put new data in

@@ -3,6 +3,8 @@ package com.example.springboot;
 import com.example.springboot.Models.MapNode;
 import com.example.springboot.Services.RouteServiceImpl;
 
+import java.util.Arrays;
+
 import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -46,17 +48,18 @@ public class WheelShareController {
 
 	@GetMapping("/getSingleRoute")
 	@ResponseBody
-	public List<MapNode> getRoute(@RequestParam double srcLat, @RequestParam double srcLon,
-	@RequestParam double destLat, @RequestParam double destLon) {
+	public List<MapNode> getSingleRoute(@RequestParam double srcLat, @RequestParam double srcLon,
+			@RequestParam double destLat, @RequestParam double destLon) {
 
 		Map<Long, MapNode> nodeMap = mapService.getNodeMap();
 		Map<Long, List<Long>> edgeMap = mapService.getEdgeMap();
 		Map<Pair<Long, Long>, Double> weightMap = mapService.getWeightMap();
 
 		// * Route building
-		List<Long> nodeIdRouteList = routeService.buildSingleRoute(srcLat, srcLon, destLat, destLon, nodeMap, edgeMap, weightMap);
+		List<Long> nodeIdRouteList = routeService.buildSingleRoute(srcLat, srcLon, destLat, destLon, nodeMap, edgeMap,
+				weightMap);
 
-		// * Convert list of nodeId -> node
+		// * Convert list of nodeId -> mapNode
 		List<MapNode> result = new ArrayList<>();
 		for (Long nodeId : nodeIdRouteList) {
 			result.add(nodeMap.get(nodeId));
@@ -67,16 +70,31 @@ public class WheelShareController {
 
 	@GetMapping("/getMultipleRoute")
 	@ResponseBody
-	public List<List<Long>> test(@RequestParam double srcLat, @RequestParam double srcLon,
-	@RequestParam double destLat, @RequestParam double destLon) {
+	public List<List<MapNode>> getMultipleRoute(@RequestParam double srcLat, @RequestParam double srcLon,
+			@RequestParam double destLat, @RequestParam double destLon) {
 		Map<Long, MapNode> nodeMap = mapService.getNodeMap();
 		Map<Long, List<Long>> edgeMap = mapService.getEdgeMap();
 		Map<Pair<Long, Long>, Double> weightMap = mapService.getWeightMap();
 
-		return routeService.buildMultipleRoute(srcLat, srcLon, destLat, destLon, 2, nodeMap, edgeMap, weightMap);
+		// * Route building
+		List<List<Long>> nodeIdRouteList = routeService.buildMultipleRoute(srcLat, srcLon, destLat, destLon, 1.2, nodeMap,
+				edgeMap, weightMap);
+		System.out.println(nodeIdRouteList.toString());
+		// * Convert list of nodeId -> mapNode
+		List<List<MapNode>> result = new ArrayList<>();
+
+		for (List<Long> nodeIdPath : nodeIdRouteList) {
+			List<MapNode> currMapNodePath = new ArrayList<>();
+			for (Long nodeId : nodeIdPath) {
+				currMapNodePath.add(nodeMap.get(nodeId));
+			}
+			result.add(currMapNodePath);
+		}
+
+		return result;
 	}
 
-	@GetMapping("/getNodeNeighbors")
+	@GetMapping("/getNodeNeighborsByCoor")
 	@ResponseBody
 	public List<Long> getNodeNeighborsByCoor(@RequestParam double srcLat, @RequestParam double srcLon) {
 		Long nodeId = routeService.getClosestNode(srcLat, srcLon, mapService.getNodeMap());
@@ -85,13 +103,14 @@ public class WheelShareController {
 
 	@GetMapping("/getEdgeWeight")
 	@ResponseBody
-	public Double getNo(@RequestParam double srcLat, @RequestParam double srcLon, @RequestParam double desLat, @RequestParam double desLon) {
+	public Double getEdgeWeight(@RequestParam double srcLat, @RequestParam double srcLon, @RequestParam double desLat,
+			@RequestParam double desLon) {
 		Long startNodeId = routeService.getClosestNode(srcLat, srcLon, mapService.getNodeMap());
 		Long endNodeId = routeService.getClosestNode(desLat, desLon, mapService.getNodeMap());
 
 		Pair<Long, Long> nodePair = new Pair<Long, Long>(startNodeId, endNodeId);
 
-		if (!mapService.getWeightMap().containsKey(nodePair))	{
+		if (!mapService.getWeightMap().containsKey(nodePair)) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Node pair not found");
 		}
 		return mapService.getWeightMap().get(nodePair);
@@ -102,5 +121,20 @@ public class WheelShareController {
 	public MapNode getClosestNode(@RequestParam double srcLat, @RequestParam double srcLon) {
 		Long nodeId = routeService.getClosestNode(srcLat, srcLon, mapService.getNodeMap());
 		return mapService.getNodeMap().get(nodeId);
+	}
+
+	@GetMapping("/testRoute")
+	@ResponseBody
+	public List<MapNode> testRoute() {
+		Map<Long, MapNode> nodeMap = mapService.getNodeMap();
+		List<Long> testNodeIdList = new ArrayList<>(
+				Arrays.asList(7213516557L, 7928535764L, 7928535763L, 5593551604L, 5594886945L, 10187258366L, 7213516553L));
+		// * Convert list of nodeId -> mapNode
+		List<MapNode> result = new ArrayList<>();
+		for (Long nodeId : testNodeIdList) {
+			result.add(nodeMap.get(nodeId));
+		}
+
+		return result;
 	}
 }

@@ -73,7 +73,7 @@ public class WheelShareController {
 		Map<Long, List<Long>> edgeMap = mapService.getEdgeMap();
 		Map<Pair<Long, Long>, Double> weightMap = mapService.getWeightMap();
 
-		return routeService.buildMultipleRoute(srcLat, srcLon, destLat, destLon, 1.5, nodeMap, edgeMap, weightMap);
+		return routeService.buildMultipleRoute(srcLat, srcLon, destLat, destLon, 2, nodeMap, edgeMap, weightMap);
 	}
 
 	@GetMapping("/getNodeNeighbors")

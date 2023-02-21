@@ -5,9 +5,6 @@ import com.example.springboot.Models.MapNode;
 
 import org.springframework.stereotype.Service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,7 +16,6 @@ import org.javatuples.Pair;
 
 @Service
 public class RouteServiceImpl implements RouteService {
-    private static final Logger log = LoggerFactory.getLogger(RouteServiceImpl.class);
     /**
      * Return the nearest node's id to the given latitude and longtitude
      * 
@@ -74,7 +70,7 @@ public class RouteServiceImpl implements RouteService {
         }
 
         while (!preNodeMap.containsKey(startNodeId) && !edgeHeap.isEmpty()) {
-            // Pop the max edge out
+            // * Pop the max edge out
             MapEdge maxEdge = edgeHeap.remove();
             long nextNodeId = maxEdge.getEndNodeId();
             long currNodeId = maxEdge.getStartNodeId();
@@ -141,7 +137,7 @@ public class RouteServiceImpl implements RouteService {
 
         double centerLatitude = (startNode.getLatitute() + endNode.getLatitute()) / 2;
         double centerLongtitude = (startNode.getLongtitude() + endNode.getLongtitude()) / 2;
-        // Have to do Math.max since the distance from the center to the startNode and endNode can be different
+        // * Have to do Math.max since the distance from the center to the startNode and endNode can be different
         double radius = radiusCoefficent * Math.max(startNode.distanceTo(centerLatitude, centerLongtitude), endNode.distanceTo(centerLatitude, centerLongtitude));
         
         Set<Long> nodeSet = new HashSet<>();
@@ -167,7 +163,6 @@ public class RouteServiceImpl implements RouteService {
         visited.add(currNodeId);
 
         if (currNodeId == endNodeId)    {
-            log.info(currentPath.toString());
             List<Long> resultPath = new ArrayList<>();
 
             for (Long nodeId : currentPath) {
@@ -185,7 +180,6 @@ public class RouteServiceImpl implements RouteService {
         for (long neighbor : neighborList)  {
             MapNode neighborNode = nodeMap.get(neighbor);
             if (neighborNode.distanceTo(centerLatitude, centerLongtitude) > radius) {
-                log.info(Long.toString(neighborNode.getNodeId()));
                 continue;
             }
             if (visited.contains(neighbor))    {

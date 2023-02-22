@@ -2,9 +2,11 @@ package com.example.springboot.Services;
 
 import com.example.springboot.Models.MapEdge;
 import com.example.springboot.Models.MapNode;
+import com.example.springboot.Models.MapRoute;
 
 import org.springframework.stereotype.Service;
 
+import java.security.InvalidAlgorithmParameterException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -191,4 +193,39 @@ public class RouteServiceImpl implements RouteService {
         visited.remove(currNodeId);
         currentPath.remove(currentPath.size() - 1);
     }
+
+    public MapRoute routeStatisticGeneration(List<Long> nodeIdList, Map<Long, MapNode> nodeMap, Map<Pair<Long, Long>, Double> weightMap) throws InvalidAlgorithmParameterException {
+        if (nodeIdList.size() < 2)    {
+            throw new InvalidAlgorithmParameterException("Node List too short. Expected at least 2 nodes in the list");
+        }
+
+        MapRoute mapRoute = new MapRoute();
+
+        double maxUncomfortScore = 0;
+        double totalUncomfortScore = 0;
+        List<MapNode> nodeList = new ArrayList<>();
+
+        for (Long nodeId : nodeIdList)  {
+            nodeList.add(nodeMap.get(nodeId));
+        }
+
+        for (int i = 0; i < nodeIdList.size() - 1; i++) {
+            Long currNode = nodeIdList.get(i);
+            Long nextNode = nodeIdList.get(i + 1);
+            Pair<Long, Long> nodePair = new Pair<Long, Long>(currNode, nextNode);
+
+            Double edgeWeight = weightMap.get(nodePair);
+            maxUncomfortScore = Math.max(maxUncomfortScore, edgeWeight);
+            totalUncomfortScore += edgeWeight;
+        }
+
+        mapRoute.setNodeList(nodeList);
+        mapRoute.setTotalUncomfortScore(totalUncomfortScore);
+        mapRoute.setAverageUncomfortScore(totalUncomfortScore / (nodeIdList.size() - 1));
+        mapRoute.setMaxUncomfortScore(maxUncomfortScore);
+        mapRoute.setNodeCount(nodeIdList.size());
+
+        return mapRoute;
+    }
+
 }

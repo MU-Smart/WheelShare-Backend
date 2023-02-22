@@ -25,6 +25,11 @@ import org.json.simple.parser.JSONParser;
 public class MapServiceBuilderImpl implements MapServiceBuilder {
 
 	private static final Logger log = LoggerFactory.getLogger(MapServiceBuilderImpl.class);
+	/** 
+	 * * nodeMap maps nodeId -> the real node with all of its related data
+	 * * edgeMap maps nodeId -> the id of all of its neighboring node's id
+	 * * weightMap maps a pair of node ids (or an edge) -> its weight 
+	 * */ 
 	private Map<Long, MapNode> nodeMap = new HashMap<Long, MapNode>();
 	private Map<Long, List<Long>> edgeMap = new HashMap<Long, List<Long>>();
 	private Map<Pair<Long, Long>, Double> weightMap = new HashMap<Pair<Long, Long>, Double>();
@@ -38,8 +43,8 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 			log.info(absoluteFilePath);
 
 			// * Read the file in
-			// Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath + "/src/main/resources/mapData.json"));
-			Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath + "/routing/mapData.json"));
+			Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath + "/src/main/resources/mapData.json"));
+			// Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath + "/routing/mapData.json"));
 			JSONObject jsonObject = (JSONObject) jsonFileObject;
 
 			// * Clean up all of the hashmaps to put new data in

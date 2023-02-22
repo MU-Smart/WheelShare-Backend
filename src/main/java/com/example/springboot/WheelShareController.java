@@ -1,6 +1,7 @@
 package com.example.springboot;
 
 import com.example.springboot.Models.MapNode;
+import com.example.springboot.Models.MapRoute;
 import com.example.springboot.Services.RouteServiceImpl;
 
 import java.util.Arrays;
@@ -13,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.example.springboot.Services.MapServiceBuilderImpl;
 
+import java.security.InvalidAlgorithmParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -48,8 +50,8 @@ public class WheelShareController {
 
 	@GetMapping("/getSingleRoute")
 	@ResponseBody
-	public List<MapNode> getSingleRoute(@RequestParam double srcLat, @RequestParam double srcLon,
-			@RequestParam double destLat, @RequestParam double destLon) {
+	public MapRoute getSingleRoute(@RequestParam double srcLat, @RequestParam double srcLon,
+			@RequestParam double destLat, @RequestParam double destLon) throws InvalidAlgorithmParameterException {
 
 		Map<Long, MapNode> nodeMap = mapService.getNodeMap();
 		Map<Long, List<Long>> edgeMap = mapService.getEdgeMap();
@@ -59,36 +61,25 @@ public class WheelShareController {
 		List<Long> nodeIdRouteList = routeService.buildSingleRoute(srcLat, srcLon, destLat, destLon, nodeMap, edgeMap,
 				weightMap);
 
-		// * Convert list of nodeId -> mapNode
-		List<MapNode> result = new ArrayList<>();
-		for (Long nodeId : nodeIdRouteList) {
-			result.add(nodeMap.get(nodeId));
-		}
-
-		return result;
+		return routeService.routeStatisticGeneration(nodeIdRouteList, nodeMap, weightMap);
 	}
 
 	@GetMapping("/getMultipleRoute")
 	@ResponseBody
-	public List<List<MapNode>> getMultipleRoute(@RequestParam double srcLat, @RequestParam double srcLon,
-			@RequestParam double destLat, @RequestParam double destLon) {
+	public List<MapRoute> getMultipleRoute(@RequestParam double srcLat, @RequestParam double srcLon,
+			@RequestParam double destLat, @RequestParam double destLon, @RequestParam double radiusCoefficent) throws InvalidAlgorithmParameterException {
 		Map<Long, MapNode> nodeMap = mapService.getNodeMap();
 		Map<Long, List<Long>> edgeMap = mapService.getEdgeMap();
 		Map<Pair<Long, Long>, Double> weightMap = mapService.getWeightMap();
 
 		// * Route building
-		List<List<Long>> nodeIdRouteList = routeService.buildMultipleRoute(srcLat, srcLon, destLat, destLon, 1.2, nodeMap,
+		List<List<Long>> nodeIdRouteList = routeService.buildMultipleRoute(srcLat, srcLon, destLat, destLon, radiusCoefficent, nodeMap,
 				edgeMap, weightMap);
-		System.out.println(nodeIdRouteList.toString());
-		// * Convert list of nodeId -> mapNode
-		List<List<MapNode>> result = new ArrayList<>();
+
+		List<MapRoute> result = new ArrayList<>();
 
 		for (List<Long> nodeIdPath : nodeIdRouteList) {
-			List<MapNode> currMapNodePath = new ArrayList<>();
-			for (Long nodeId : nodeIdPath) {
-				currMapNodePath.add(nodeMap.get(nodeId));
-			}
-			result.add(currMapNodePath);
+			result.add(routeService.routeStatisticGeneration(nodeIdPath, nodeMap, weightMap));
 		}
 
 		return result;
@@ -125,16 +116,12 @@ public class WheelShareController {
 
 	@GetMapping("/testRoute")
 	@ResponseBody
-	public List<MapNode> testRoute() {
+	public MapRoute testRoute() throws InvalidAlgorithmParameterException {
 		Map<Long, MapNode> nodeMap = mapService.getNodeMap();
+		Map<Pair<Long, Long>, Double> weightMap = mapService.getWeightMap();
 		List<Long> testNodeIdList = new ArrayList<>(
 				Arrays.asList(7213516557L, 7928535764L, 7928535763L, 5593551604L, 5594886945L, 10187258366L, 7213516553L));
-		// * Convert list of nodeId -> mapNode
-		List<MapNode> result = new ArrayList<>();
-		for (Long nodeId : testNodeIdList) {
-			result.add(nodeMap.get(nodeId));
-		}
 
-		return result;
+		return routeService.routeStatisticGeneration(testNodeIdList, nodeMap, weightMap);
 	}
 }

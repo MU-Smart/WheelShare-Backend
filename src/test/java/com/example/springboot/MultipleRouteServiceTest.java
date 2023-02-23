@@ -33,7 +33,6 @@ public class MultipleRouteServiceTest {
   private Map<Long, MapNode> nodeMapTest = new HashMap<>();
   private Map<Long, List<Long>> edgeMapTest = new HashMap<>();
   private Map<Pair<Long, Long>, Double> weightMapTest = new HashMap<>();
-  private Map<Long, Long> preNodeMap = new HashMap<>();
 
   @Before
   public void init() {

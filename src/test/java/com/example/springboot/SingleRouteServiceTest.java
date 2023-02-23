@@ -22,7 +22,7 @@ import com.example.springboot.Services.RouteService;
 @SpringBootTest
 @AutoConfigureMockMvc
 @RunWith(SpringRunner.class)
-public class RouteServiceTest {
+public class SingleRouteServiceTest {
   private Map<Long, MapNode> nodeMapTest = new HashMap<>();
   private Map<Long, List<Long>> edgeMapTest = new HashMap<>();
   private Map<Pair<Long, Long>, Double> weightMapTest = new HashMap<>();
@@ -108,7 +108,7 @@ public class RouteServiceTest {
     weightMapTest.put(new Pair<Long,Long>(6L, 5L), 50.0);
     weightMapTest.put(new Pair<Long,Long>(6L, 10L), 5.0);
     weightMapTest.put(new Pair<Long,Long>(10L, 6L), 5.0);
-    weightMapTest.put(new Pair<Long,Long>(5L, 10L), 5.0);
+    weightMapTest.put(new Pair<Long,Long>(5L, 10L), 100.0);
     weightMapTest.put(new Pair<Long,Long>(10L, 5L), 100.0);
 
     // init data for the preNode map
@@ -145,9 +145,9 @@ public class RouteServiceTest {
   }
 
   @Test
-  public void buildMapTest() {
+  public void buildSingleRouteTest() {
     // path from node 0 to node 5
-    List<Long> expected1 = Arrays.asList(0L,1L,2L,6L,10L,5L);
+    List<Long> expected1 = Arrays.asList(0L,1L,2L,6L,10L,4L, 3L, 5L);
     assertEquals(expected1, routeService.buildSingleRoute(0, 0, 5, 0, nodeMapTest, edgeMapTest, weightMapTest));
     
     // path from node 7 to node 3
@@ -160,7 +160,7 @@ public class RouteServiceTest {
   }
 
   @Test
-  public void getRouteTest() {
+  public void getSingleRouteTest() {
     // path from node 1 to node 3
     List<Long> expected1 = Arrays.asList(1L,2L,5L,6L,9L,3L);
     assertEquals(expected1, routeService.getSingleRoute(preNodeMap, 1L, 3L));

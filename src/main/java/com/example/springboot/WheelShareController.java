@@ -67,14 +67,16 @@ public class WheelShareController {
 	@GetMapping("/getMultipleRoute")
 	@ResponseBody
 	public List<MapRoute> getMultipleRoute(@RequestParam double srcLat, @RequestParam double srcLon,
-			@RequestParam double destLat, @RequestParam double destLon, @RequestParam double radiusCoefficent) throws InvalidAlgorithmParameterException {
+			@RequestParam double destLat, @RequestParam double destLon, @RequestParam double radiusCoefficent)
+			throws InvalidAlgorithmParameterException {
 		Map<Long, MapNode> nodeMap = mapService.getNodeMap();
 		Map<Long, List<Long>> edgeMap = mapService.getEdgeMap();
 		Map<Pair<Long, Long>, Double> weightMap = mapService.getWeightMap();
 
 		// * Route building
-		List<List<Long>> nodeIdRouteList = routeService.buildMultipleRoute(srcLat, srcLon, destLat, destLon, radiusCoefficent, nodeMap,
-				edgeMap, weightMap);
+		List<List<Long>> nodeIdRouteList = routeService.buildMultipleRoute(srcLat, srcLon, destLat, destLon,
+				radiusCoefficent, nodeMap,
+				edgeMap);
 
 		List<MapRoute> result = new ArrayList<>();
 

@@ -6,6 +6,8 @@ import com.example.springboot.Models.MapRoute;
 
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.security.InvalidAlgorithmParameterException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,9 +23,9 @@ public class RouteServiceImpl implements RouteService {
     /**
      * Return the nearest node's id to the given latitude and longtitude
      * 
-     * @param latitude the latitude of the node
+     * @param latitude   the latitude of the node
      * @param longtitude the longtitude of the node
-     * @param nodeMap the hashmap containing the node
+     * @param nodeMap    the hashmap containing the node
      * @return
      */
     public Long getClosestNode(double latitude, double longitude, Map<Long, MapNode> nodeMap) {
@@ -37,7 +39,7 @@ public class RouteServiceImpl implements RouteService {
             if (currDistance < minDistance) {
                 minDistance = currDistance;
                 nearestNodeId = nodeId;
-            }   else if (currDistance == minDistance && nodeId < nearestNodeId)   {
+            } else if (currDistance == minDistance && nodeId < nearestNodeId) {
                 nearestNodeId = nodeId;
             }
         }
@@ -45,10 +47,11 @@ public class RouteServiceImpl implements RouteService {
     }
 
     /**
-     * Build the route given two coordinates using the algorithm from our research project
+     * Build the route given two coordinates using the algorithm from our research
+     * project
      * 
-     * @param srcLat latitude of source
-     * @param srcLon longtitude of source
+     * @param srcLat  latitude of source
+     * @param srcLon  longtitude of source
      * @param destLat latitude of destination
      * @param destLon longtitude of destination
      */
@@ -100,9 +103,9 @@ public class RouteServiceImpl implements RouteService {
     /**
      * Build the whole path from start to end using the preNode map
      * 
-     * @param preNodeMap the map containing the node as key and nextNode is value
+     * @param preNodeMap  the map containing the node as key and nextNode is value
      * @param startNodeId id of the start node
-     * @param endNodeId id of the end node
+     * @param endNodeId   id of the end node
      */
     public List<Long> getSingleRoute(Map<Long, Long> preNodeMap, long startNodeId, long endNodeId) {
         List<Long> result = new ArrayList<>();
@@ -119,17 +122,21 @@ public class RouteServiceImpl implements RouteService {
 
     /**
      * Generate all possible routes given 2 coordinates
-     * Since this function uses recursion, we have to have a boundary to limit the search space
-     * The boundary would be a circle defined by the distance between the 2 start and end node with the radius coefficient
+     * Since this function uses recursion, we have to have a boundary to limit the
+     * search space
+     * The boundary would be a circle defined by the distance between the 2 start
+     * and end node with the radius coefficient
      * 
-     * @param srcLat latitude of source
-     * @param srcLon longtitude of source
-     * @param destLat latitude of destination
-     * @param destLon longtitude of destination
-     * @param radiusCoefficient the coefficient to decide how big the circle boundary is
+     * @param srcLat            latitude of source
+     * @param srcLon            longtitude of source
+     * @param destLat           latitude of destination
+     * @param destLon           longtitude of destination
+     * @param radiusCoefficient the coefficient to decide how big the circle
+     *                          boundary is
      */
-    public List<List<Long>> buildMultipleRoute(double srcLat, double srcLon, double destLat, double destLon, double radiusCoefficent, 
-    Map<Long, MapNode> nodeMap, Map<Long, List<Long>> edgeMap, Map<Pair<Long, Long>, Double> weightMap) {
+    public List<List<Long>> buildMultipleRoute(double srcLat, double srcLon, double destLat, double destLon,
+            double radiusCoefficent,
+            Map<Long, MapNode> nodeMap, Map<Long, List<Long>> edgeMap) {
         List<List<Long>> multiPathResult = new ArrayList<>();
 
         long startNodeId = getClosestNode(srcLat, srcLon, nodeMap);
@@ -139,32 +146,37 @@ public class RouteServiceImpl implements RouteService {
 
         double centerLatitude = (startNode.getLatitute() + endNode.getLatitute()) / 2;
         double centerLongtitude = (startNode.getLongtitude() + endNode.getLongtitude()) / 2;
-        // * Have to do Math.max since the distance from the center to the startNode and endNode can be different
-        double radius = radiusCoefficent * Math.max(startNode.distanceTo(centerLatitude, centerLongtitude), endNode.distanceTo(centerLatitude, centerLongtitude));
-        
+        // * Have to do Math.max since the distance from the center to the startNode and
+        // endNode can be different
+        double radius = radiusCoefficent * Math.max(startNode.distanceTo(centerLatitude, centerLongtitude),
+                endNode.distanceTo(centerLatitude, centerLongtitude));
+
         Set<Long> nodeSet = new HashSet<>();
         List<Long> currentPath = new ArrayList<>();
-        multipleRouteRecursion(startNodeId, endNodeId, radius, centerLatitude, centerLongtitude, edgeMap, nodeMap, multiPathResult, currentPath, nodeSet);
+        multipleRouteRecursion(startNodeId, endNodeId, radius, centerLatitude, centerLongtitude, edgeMap, nodeMap,
+                multiPathResult, currentPath, nodeSet);
         return multiPathResult;
     }
 
     /**
      * Backtracking helper function to perform the DFS search
      * 
-     * @param srcLat latitude of source
-     * @param srcLon longtitude of source
-     * @param destLat latitude of destination
-     * @param destLon longtitude of destination
-     * @param radiusCoefficient the coefficient to decide how big the circle boundary is
+     * @param srcLat            latitude of source
+     * @param srcLon            longtitude of source
+     * @param destLat           latitude of destination
+     * @param destLon           longtitude of destination
+     * @param radiusCoefficient the coefficient to decide how big the circle
+     *                          boundary is
      */
 
-    public void multipleRouteRecursion(long currNodeId, long endNodeId,  double radius, double centerLatitude, 
-    double centerLongtitude, Map<Long, List<Long>> edgeMap, Map<Long, MapNode> nodeMap, List<List<Long>> multiPathResult, 
-    List<Long> currentPath, Set<Long> visited)  {
+    public void multipleRouteRecursion(long currNodeId, long endNodeId, double radius, double centerLatitude,
+            double centerLongtitude, Map<Long, List<Long>> edgeMap, Map<Long, MapNode> nodeMap,
+            List<List<Long>> multiPathResult,
+            List<Long> currentPath, Set<Long> visited) {
         currentPath.add(currNodeId);
         visited.add(currNodeId);
 
-        if (currNodeId == endNodeId)    {
+        if (currNodeId == endNodeId) {
             List<Long> resultPath = new ArrayList<>();
 
             for (Long nodeId : currentPath) {
@@ -176,26 +188,39 @@ public class RouteServiceImpl implements RouteService {
             currentPath.remove(currentPath.size() - 1);
             return;
         }
-        
+
         List<Long> neighborList = edgeMap.get(currNodeId);
 
-        for (long neighbor : neighborList)  {
+        for (long neighbor : neighborList) {
             MapNode neighborNode = nodeMap.get(neighbor);
             if (neighborNode.distanceTo(centerLatitude, centerLongtitude) > radius) {
                 continue;
             }
-            if (visited.contains(neighbor))    {
+            if (visited.contains(neighbor)) {
                 continue;
             }
-            multipleRouteRecursion(neighbor, endNodeId, radius, centerLatitude, centerLongtitude, edgeMap, nodeMap, multiPathResult, currentPath, visited);
+            multipleRouteRecursion(neighbor, endNodeId, radius, centerLatitude, centerLongtitude, edgeMap, nodeMap,
+                    multiPathResult, currentPath, visited);
         }
 
         visited.remove(currNodeId);
         currentPath.remove(currentPath.size() - 1);
     }
 
-    public MapRoute routeStatisticGeneration(List<Long> nodeIdList, Map<Long, MapNode> nodeMap, Map<Pair<Long, Long>, Double> weightMap) throws InvalidAlgorithmParameterException {
-        if (nodeIdList.size() < 2)    {
+    /**
+     * Helper function to return a MapRoute Object with all of its statistic
+     * 
+     * @param nodeIdList list containing the ids of all the nodes on the route
+     * @param nodeMap    the hashmap containing the node
+     * @param weightMap  the hashmap containing the weight
+     * 
+     * @throws InvalidAlgorithmParameterException
+     */
+
+    public MapRoute routeStatisticGeneration(List<Long> nodeIdList, Map<Long, MapNode> nodeMap,
+            Map<Pair<Long, Long>, Double> weightMap) throws InvalidAlgorithmParameterException {
+        // ! Size of the nodeList is less than 2 -> Invalid Route
+        if (nodeIdList.size() < 2) {
             throw new InvalidAlgorithmParameterException("Node List too short. Expected at least 2 nodes in the list");
         }
 
@@ -205,7 +230,7 @@ public class RouteServiceImpl implements RouteService {
         double totalUncomfortScore = 0;
         List<MapNode> nodeList = new ArrayList<>();
 
-        for (Long nodeId : nodeIdList)  {
+        for (Long nodeId : nodeIdList) {
             nodeList.add(nodeMap.get(nodeId));
         }
 
@@ -221,11 +246,26 @@ public class RouteServiceImpl implements RouteService {
 
         mapRoute.setNodeList(nodeList);
         mapRoute.setTotalUncomfortScore(totalUncomfortScore);
-        mapRoute.setAverageUncomfortScore(totalUncomfortScore / (nodeIdList.size() - 1));
+        mapRoute.setAverageUncomfortScore(round(totalUncomfortScore / (nodeIdList.size() - 1), 2));
         mapRoute.setMaxUncomfortScore(maxUncomfortScore);
         mapRoute.setNodeCount(nodeIdList.size());
 
         return mapRoute;
     }
 
+    /**
+     * Round double values to a specific decimal places
+     * @param value the value to be rounded
+     * @param places decimal places
+     * @return
+     */
+
+    private static double round(double value, int places) {
+        if (places < 0)
+            throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(Double.toString(value));
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
 }

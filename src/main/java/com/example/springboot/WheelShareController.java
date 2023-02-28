@@ -3,6 +3,7 @@ package com.example.springboot;
 import com.example.springboot.Models.MapNode;
 import com.example.springboot.Models.MapRoute;
 import com.example.springboot.Services.RouteServiceImpl;
+import com.example.springboot.Services.UserServiceImpl;
 
 import java.util.Arrays;
 
@@ -18,6 +19,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 public class WheelShareController {
@@ -27,6 +29,9 @@ public class WheelShareController {
 
 	@Autowired
 	private RouteServiceImpl routeService;
+
+	@Autowired
+	private UserServiceImpl userService;
 
 	@GetMapping("/nodeMap")
 	public String getNodeMap() {
@@ -114,6 +119,13 @@ public class WheelShareController {
 	public MapNode getClosestNode(@RequestParam double srcLat, @RequestParam double srcLon) {
 		Long nodeId = routeService.getClosestNode(srcLat, srcLon, mapService.getNodeMap());
 		return mapService.getNodeMap().get(nodeId);
+	}
+
+	@GetMapping("/createUser")
+	@ResponseBody
+	public String createUser(@RequestParam String name) throws InterruptedException, ExecutionException {
+		userService.createUser(name);
+		return "Success";
 	}
 
 	@GetMapping("/testRoute")

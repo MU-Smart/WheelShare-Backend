@@ -16,15 +16,16 @@ import com.google.firebase.FirebaseOptions;
 @EnableScheduling
 public class Application {
 	public static void main(String[] args) throws IOException {
+		// * Retrieve the credentials from file
 		String absoluteFilePath = new File("").getAbsolutePath();
 		FileInputStream serviceAccount = new FileInputStream(absoluteFilePath + "/firebase-key.json");
-	
-		FirebaseOptions options;
-			options = new FirebaseOptions.Builder()
-			.setCredentials(GoogleCredentials.fromStream(serviceAccount))
-			.build();
-			FirebaseApp.initializeApp(options);
-
+		// * Load credentials into firebase and build it up
+		FirebaseOptions options = FirebaseOptions.builder()
+    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+    .build();
+		// * Start the database
+		FirebaseApp.initializeApp(options);
+		// * Start the Spring Boot App
 		SpringApplication.run(Application.class, args);
 	}
 }

@@ -2,6 +2,7 @@ package com.example.springboot;
 
 import com.example.springboot.Models.MapNode;
 import com.example.springboot.Models.MapRoute;
+import com.example.springboot.Models.User;
 import com.example.springboot.Services.RouteServiceImpl;
 import com.example.springboot.Services.UserServiceImpl;
 
@@ -123,9 +124,38 @@ public class WheelShareController {
 
 	@GetMapping("/createUser")
 	@ResponseBody
-	public String createUser(@RequestParam String name) throws InterruptedException, ExecutionException {
-		userService.createUser(name);
-		return "Success";
+	public String createUser(@RequestParam String email, @RequestParam String password, @RequestParam String name, 
+	@RequestParam int age, @RequestParam String gender, @RequestParam double height, @RequestParam double weight, 
+  @RequestParam String type_wc, @RequestParam String wheel_type, @RequestParam String tire_mat, @RequestParam double wc_height, 
+	@RequestParam double wc_width) throws InterruptedException, ExecutionException {
+		return userService.createUser(email, password, name, age, gender, height, weight, type_wc, wheel_type, tire_mat, wc_height, wc_width);
+	}
+
+	@GetMapping("/retrieveUserByEmail")
+	@ResponseBody
+	public User retrieveUserByEmail(@RequestParam String email) throws InterruptedException, ExecutionException {
+		return userService.retrieveUserByEmail(email);
+	}
+
+	@GetMapping("/retrieveUserIdByEmail")
+	@ResponseBody
+	public String retrieveUserIdByEmail(@RequestParam String email) throws InterruptedException, ExecutionException {
+		return userService.retrieveUserIdByEmail(email);
+	}
+
+	@GetMapping("/updateUserByEmail")
+	@ResponseBody
+	public String updateUserByEmail(@RequestParam String oldEmail, @RequestParam String newEmail, @RequestParam String password, 
+	@RequestParam String name, @RequestParam int age, @RequestParam String gender, @RequestParam double height, @RequestParam double weight, 
+  @RequestParam String type_wc, @RequestParam String wheel_type, @RequestParam String tire_mat, @RequestParam double wc_height, 
+	@RequestParam double wc_width) throws InterruptedException, ExecutionException {
+		return userService.updateUserByEmail(oldEmail, newEmail, password, name, age, gender, height, weight, type_wc, wheel_type, tire_mat, wc_height, wc_width);
+	}
+
+	@GetMapping("/deleteUserByEmail")
+	@ResponseBody
+	public String deleteUserByEmail(@RequestParam String email) throws InterruptedException, ExecutionException {
+		return userService.deleteUserByEmail(email);
 	}
 
 	@GetMapping("/testRoute")

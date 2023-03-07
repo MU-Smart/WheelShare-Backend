@@ -18,6 +18,7 @@ public class Application {
 	public static void main(String[] args) throws IOException {
 		// * Retrieve the credentials from file
 		String absoluteFilePath = new File("").getAbsolutePath();
+		System.out.println("Hello Thomas + " + absoluteFilePath);
 		FileInputStream serviceAccount = new FileInputStream(absoluteFilePath + "/firebase-key.json");
 		// * Load credentials into firebase and build it up
 		FirebaseOptions options = FirebaseOptions.builder()

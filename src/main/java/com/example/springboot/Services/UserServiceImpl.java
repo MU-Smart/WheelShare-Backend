@@ -17,6 +17,22 @@ import com.google.firebase.database.DatabaseException;
 
 @Service
 public class UserServiceImpl implements UserService {
+    /**
+     * Create the user object and store it in the Firestore database
+     * 
+     * @param email
+     * @param password
+     * @param name
+     * @param age
+     * @param gender
+     * @param height
+     * @param weight
+     * @param type_wc
+     * @param wheel_type
+     * @param tire_mat
+     * @param wc_height
+     * @param wc_width
+     */
   public String createUser(String email, String password, String name, int age, String gender, double height,
       double weight, String type_wc, String wheel_type, String tire_mat, double wc_height, double wc_width)
       throws InterruptedException, ExecutionException {
@@ -42,6 +58,14 @@ public class UserServiceImpl implements UserService {
     return addedDocRef.get().getId();
   }
 
+  /**
+   * Retrieve the user object using the email
+   * 
+   * @param email
+   * @return
+   * @throws InterruptedException
+   * @throws ExecutionException
+   */
   public User retrieveUserByEmail(String email) throws InterruptedException, ExecutionException {
     // Init the Firestore database
     Firestore dbFirestore = FirestoreClient.getFirestore();
@@ -62,6 +86,15 @@ public class UserServiceImpl implements UserService {
     return documents.get(0).toObject(User.class);
   }
 
+  
+  /**
+   * Retrieve the user id using the email
+   * 
+   * @param email
+   * @return
+   * @throws InterruptedException
+   * @throws ExecutionException
+   */
   public String retrieveUserIdByEmail(String email) throws InterruptedException, ExecutionException {
     // Init the Firestore database
     Firestore dbFirestore = FirestoreClient.getFirestore();
@@ -69,8 +102,7 @@ public class UserServiceImpl implements UserService {
     // asynchronously retrieve multiple documents
     ApiFuture<QuerySnapshot> future = dbFirestore.collection("user").whereEqualTo("email", email).get();
     // future.get() blocks on response
-    // this list should only be length 1 as each email must be unique in our
-    // database
+    // this list should only be length 1 as each email must be unique in our database
     List<QueryDocumentSnapshot> documents = future.get().getDocuments();
 
     // the queried list is empty, throw an error
@@ -82,29 +114,67 @@ public class UserServiceImpl implements UserService {
     return documents.get(0).getId();
   }
 
+  /**
+   * Update the user's information. 
+   * This function allows updating the email address but it will keep the key id constant.
+   * It searches for the onbject using the email - oldEmail
+   * 
+   * @param oldEmail old email used to look up the User object
+   * @param newEmail 
+   * @param password
+   * @param name
+   * @param age
+   * @param gender
+   * @param height
+   * @param weight
+   * @param type_wc
+   * @param wheel_type
+   * @param tire_mat
+   * @param wc_height
+   * @param wc_width
+   * @return
+   * @throws InterruptedException
+   * @throws ExecutionException
+   */
+
   public String updateUserByEmail(String oldEmail, String newEmail, String password, String name, int age,
-      String gender, double height, double weight, String type_wc, String wheel_type, String tire_mat, 
+      String gender, double height, double weight, String type_wc, String wheel_type, String tire_mat,
       double wc_height, double wc_width) throws InterruptedException, ExecutionException {
     // Init the Firestore database
     Firestore dbFirestore = FirestoreClient.getFirestore();
 
     // asynchronously retrieve multiple documents
-    ApiFuture<QuerySnapshot> future = dbFirestore.collection("user").whereEqualTo("email", oldEmail).get();
+    ApiFuture<QuerySnapshot> oldFuture = dbFirestore.collection("user").whereEqualTo("email", oldEmail).get();
+    ApiFuture<QuerySnapshot> newFuture = dbFirestore.collection("user").whereEqualTo("email", newEmail).get();
     // future.get() blocks on response
-    // this list should only be length 1 as each email must be unique in our
-    // database
-    List<QueryDocumentSnapshot> documents = future.get().getDocuments();
+    // this list should only be length 1 as each email must be unique in our database
+    List<QueryDocumentSnapshot> oldDocuments = oldFuture.get().getDocuments();
+    List<QueryDocumentSnapshot> newDocuments = newFuture.get().getDocuments();
 
     // the queried list is empty, throw an error
-    if (documents.isEmpty()) {
+    if (oldDocuments.isEmpty()) {
       throw new DatabaseException("Email does not exist.");
+    }
+
+    // new email has already existed, 2 scenarios:
+    // 1. The new email is the same as the old email -> Okay
+    // 2. The new email belongs to another account -> Error
+    if (!newDocuments.isEmpty())  {
+      // the id associating with the new and old email
+      String oldEmailId = retrieveUserIdByEmail(oldEmail);
+      String newEmailId = retrieveUserIdByEmail(newEmail);
+
+      // the id of the 2 objects are different -> new email is used by a different account.
+      if (!oldEmailId.equals(newEmailId))  {
+        throw new DatabaseException("New email has already existed");
+      }
     }
 
     // return the user info
     String userId = retrieveUserIdByEmail(oldEmail);
     User newUser = new User(newEmail, password, name, age, gender, height, weight, type_wc, wheel_type, tire_mat,
         wc_height, wc_width);
-    
+
     // update the user
     ApiFuture<WriteResult> writeResult = dbFirestore.collection("user").document(userId).set(newUser);
 
@@ -112,6 +182,14 @@ public class UserServiceImpl implements UserService {
     return writeResult.get().getUpdateTime().toString();
   }
 
+  /**
+   * Delete a user by using the email 
+   * 
+   * @param email
+   * @return
+   * @throws InterruptedException
+   * @throws ExecutionException
+   */
   public String deleteUserByEmail(String email) throws InterruptedException, ExecutionException {
     // Init the Firestore database
     Firestore dbFirestore = FirestoreClient.getFirestore();
@@ -119,8 +197,7 @@ public class UserServiceImpl implements UserService {
     // asynchronously retrieve multiple documents
     ApiFuture<QuerySnapshot> future = dbFirestore.collection("user").whereEqualTo("email", email).get();
     // future.get() blocks on response
-    // this list should only be length 1 as each email must be unique in our
-    // database
+    // this list should only be length 1 as each email must be unique in our database
     List<QueryDocumentSnapshot> documents = future.get().getDocuments();
 
     // the queried list is empty, throw an error

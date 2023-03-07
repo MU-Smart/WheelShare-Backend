@@ -10,5 +10,12 @@ public interface UserService {
       throws InterruptedException, ExecutionException;
 
   User retrieveUserByEmail(String email) throws InterruptedException, ExecutionException;
-
+  
+  String retrieveUserIdByEmail(String email) throws InterruptedException, ExecutionException;
+  
+  String updateUserByEmail(String oldEmail, String newEmail, String password, String name, int age,
+      String gender, double height, double weight, String type_wc, String wheel_type, String tire_mat,
+      double wc_height, double wc_width) throws InterruptedException, ExecutionException;
+  
+  String deleteUserByEmail(String email) throws InterruptedException, ExecutionException;
 }

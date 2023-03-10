@@ -12,9 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.junit.Test;
 import org.javatuples.Pair;
 import org.junit.Before;
@@ -94,8 +91,6 @@ public class MultipleRouteServiceTest {
   @Autowired
   private RouteService routeService;
 
-  private static final Logger log = LoggerFactory.getLogger(MultipleRouteServiceTest.class);
-
   @Test
   public void buildMultipleRouteTest() {
     // path from node 0 to node 6
@@ -121,7 +116,6 @@ public class MultipleRouteServiceTest {
     assertEquals(35.0, mapRoute.getTotalUncomfortScore());
     assertEquals(18.0, mapRoute.getMaxUncomfortScore());
     assertEquals(11.67, mapRoute.getAverageUncomfortScore());
-    log.info(mapRoute.toString());
   }
 
   @Test
@@ -132,7 +126,6 @@ public class MultipleRouteServiceTest {
     assertEquals(21.0, mapRoute.getTotalUncomfortScore());
     assertEquals(12.0, mapRoute.getMaxUncomfortScore());
     assertEquals(5.25, mapRoute.getAverageUncomfortScore());
-    log.info(mapRoute.toString());
   }
 
 }

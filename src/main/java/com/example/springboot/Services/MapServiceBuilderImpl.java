@@ -40,7 +40,6 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 	public void buildMap() {
 		try {
 			String absoluteFilePath = new File("").getAbsolutePath();
-			log.info(absoluteFilePath);
 
 			// * Read the file in
 			Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath + "/src/main/resources/mapData.json"));

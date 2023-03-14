@@ -8,10 +8,12 @@ import java.io.File;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jmx.export.metadata.InvalidMetadataException;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import com.example.springboot.Models.Errors;
 import com.example.springboot.Models.MapNode;
 
 import java.io.FileReader;
@@ -69,8 +71,7 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 				Double longtitude = Double.parseDouble(currNode.get("@lon").toString());
 
 				if (nodeMap.containsKey(nodeId)) {
-					throw new InvalidMetadataException(
-							String.format("Duplicate node id Exception: Node %d. Please check the input files for errors.", nodeId));
+					throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Errors.DUPLICATE_NODE_ID.getMessage() + Long.toString(nodeId));
 				}
 				MapNode mapNode = new MapNode(nodeId, version, changeSet, timestamp, user, userId, latitude, longtitude);
 				nodeMap.put(nodeId, mapNode);
@@ -93,7 +94,7 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 				 */
 				if (currWay.get("tag") == null) {
 					unlabelledWayCount++;
-					log.warn(String.format("Tag not available for this way: Id - %s", currWay.get("@id")));
+					log.warn(Errors.TAG_UNAVAILABLE.getMessage() + currWay.get("@id"));
 				} else {
 
 					String tagType = currWay.get("tag").getClass().toString();
@@ -109,7 +110,7 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 									weight = Double.parseDouble(currTag.get("@v").toString());
 								} catch (NumberFormatException e) {
 									unlabelledWayCount++;
-									log.info(String.format("Incline is not a number at way : %s", currWay.get("@id")));
+									log.info(Errors.INCLINE_NOT_NUMBER.getMessage() + currWay.get("@id"));
 								}
 							}
 						}
@@ -123,7 +124,7 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 								weight = Double.parseDouble(tagOject.get("@v").toString());
 							} catch (NumberFormatException e) {
 								unlabelledWayCount++;
-								log.info(String.format("Incline is not a number at way : %s", currWay.get("@id")));
+								log.info(Errors.INCLINE_NOT_NUMBER.getMessage() + currWay.get("@id"));
 							}
 						}
 					}
@@ -173,7 +174,7 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 			log.info(String.format("Weight Map Size = %d", weightMap.size()));
 			log.info(String.format("Number of ways that missed valid incline value = %d", unlabelledWayCount));
 		} catch (Exception e) {
-			log.error("Error in buildMap function", e);
+			log.error(Errors.BUILD_ERROR.getMessage(), e);
 			e.printStackTrace();
 		}
 	}

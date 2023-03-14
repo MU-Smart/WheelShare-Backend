@@ -1,10 +1,14 @@
 package com.example.springboot.Services;
 
+import com.example.springboot.Models.Errors;
 import com.example.springboot.Models.MapEdge;
 import com.example.springboot.Models.MapNode;
 import com.example.springboot.Models.MapRoute;
+import com.google.api.gax.rpc.InvalidArgumentException;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -221,7 +225,7 @@ public class RouteServiceImpl implements RouteService {
             Map<Pair<Long, Long>, Double> weightMap) throws InvalidAlgorithmParameterException {
         // ! Size of the nodeList is less than 2 -> Invalid Route
         if (nodeIdList.size() < 2) {
-            throw new InvalidAlgorithmParameterException("Node List too short. Expected at least 2 nodes in the list");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, Errors.INVALID_PATH.getMessage());
         }
 
         MapRoute mapRoute = new MapRoute();
@@ -255,14 +259,16 @@ public class RouteServiceImpl implements RouteService {
 
     /**
      * Round double values to a specific decimal places
-     * @param value the value to be rounded
+     * 
+     * @param value  the value to be rounded
      * @param places decimal places
      * @return
+     * @throws InvalidAlgorithmParameterException
      */
 
-    private static double round(double value, int places) {
+    private static double round(double value, int places) throws InvalidAlgorithmParameterException {
         if (places < 0)
-            throw new IllegalArgumentException();
+            throw new InvalidAlgorithmParameterException(Errors.INVALID_DECIMAL_VALUE.getMessage());
 
         BigDecimal bd = new BigDecimal(Double.toString(value));
         bd = bd.setScale(places, RoundingMode.HALF_UP);

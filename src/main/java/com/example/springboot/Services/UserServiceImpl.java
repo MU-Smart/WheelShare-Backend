@@ -4,9 +4,12 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.springboot.Models.User;
+import com.example.springboot.Models.Errors;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
@@ -14,7 +17,6 @@ import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.cloud.FirestoreClient;
-import com.google.firebase.database.DatabaseException;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -48,7 +50,12 @@ public class UserServiceImpl implements UserService {
 
     // email has already existed
     if (!documents.isEmpty()) {
-      throw new DatabaseException("This email has already existed.Please use another email.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Errors.DUPLICATE_EMAIL.getMessage());
+    }
+
+    // the email is not valid
+    if (!emailValidation(email)) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Errors.INVALID_EMAIL.getMessage());
     }
 
     // if not, create a new User object
@@ -80,7 +87,7 @@ public class UserServiceImpl implements UserService {
 
     // the queried list is empty, throw an error
     if (documents.isEmpty()) {
-      throw new DatabaseException("Email does not exist.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Errors.EMPTY_EMAIL.getMessage());
     }
 
     // return the user info
@@ -108,7 +115,7 @@ public class UserServiceImpl implements UserService {
 
     // the queried list is empty, throw an error
     if (documents.isEmpty()) {
-      throw new DatabaseException("Email does not exist.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Errors.EMPTY_EMAIL.getMessage());
     }
 
     // return the user info
@@ -156,7 +163,7 @@ public class UserServiceImpl implements UserService {
 
     // the queried list is empty, throw an error
     if (oldDocuments.isEmpty()) {
-      throw new DatabaseException("Email does not exist.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Errors.EMPTY_EMAIL.getMessage());
     }
 
     // new email has already existed, 2 scenarios:
@@ -170,8 +177,13 @@ public class UserServiceImpl implements UserService {
       // the id of the 2 objects are different -> new email is used by a different
       // account.
       if (!oldEmailId.equals(newEmailId)) {
-        throw new DatabaseException("New email has already existed");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Errors.DUPLICATE_EMAIL.getMessage());
       }
+    }
+
+    // the email is not valid
+    if (!emailValidation(newEmail)) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Errors.INVALID_EMAIL.getMessage());
     }
 
     // return the user info
@@ -207,7 +219,7 @@ public class UserServiceImpl implements UserService {
 
     // the queried list is empty, throw an error
     if (documents.isEmpty()) {
-      throw new DatabaseException("Email does not exist.");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Errors.EMPTY_EMAIL.getMessage());
     }
 
     // delete the user
@@ -232,8 +244,8 @@ public class UserServiceImpl implements UserService {
    * @return
    * @throws InterruptedException
    * @throws ExecutionException
-   */  
-  public static boolean emailValidation(String emailAddress) {
+   */
+  public boolean emailValidation(String emailAddress) {
     String regexPattern = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
     return Pattern.compile(regexPattern)
         .matcher(emailAddress)

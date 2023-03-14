@@ -2,6 +2,7 @@ package com.example.springboot.Services;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Service;
 
@@ -17,22 +18,22 @@ import com.google.firebase.database.DatabaseException;
 
 @Service
 public class UserServiceImpl implements UserService {
-    /**
-     * Create the user object and store it in the Firestore database
-     * 
-     * @param email
-     * @param password
-     * @param name
-     * @param age
-     * @param gender
-     * @param height
-     * @param weight
-     * @param type_wc
-     * @param wheel_type
-     * @param tire_mat
-     * @param wc_height
-     * @param wc_width
-     */
+  /**
+   * Create the user object and store it in the Firestore database
+   * 
+   * @param email
+   * @param password
+   * @param name
+   * @param age
+   * @param gender
+   * @param height
+   * @param weight
+   * @param type_wc
+   * @param wheel_type
+   * @param tire_mat
+   * @param wc_height
+   * @param wc_width
+   */
   public String createUser(String email, String password, String name, int age, String gender, double height,
       double weight, String type_wc, String wheel_type, String tire_mat, double wc_height, double wc_width)
       throws InterruptedException, ExecutionException {
@@ -86,7 +87,6 @@ public class UserServiceImpl implements UserService {
     return documents.get(0).toObject(User.class);
   }
 
-  
   /**
    * Retrieve the user id using the email
    * 
@@ -102,7 +102,8 @@ public class UserServiceImpl implements UserService {
     // asynchronously retrieve multiple documents
     ApiFuture<QuerySnapshot> future = dbFirestore.collection("user").whereEqualTo("email", email).get();
     // future.get() blocks on response
-    // this list should only be length 1 as each email must be unique in our database
+    // this list should only be length 1 as each email must be unique in our
+    // database
     List<QueryDocumentSnapshot> documents = future.get().getDocuments();
 
     // the queried list is empty, throw an error
@@ -115,12 +116,13 @@ public class UserServiceImpl implements UserService {
   }
 
   /**
-   * Update the user's information. 
-   * This function allows updating the email address but it will keep the key id constant.
+   * Update the user's information.
+   * This function allows updating the email address but it will keep the key id
+   * constant.
    * It searches for the onbject using the email - oldEmail
    * 
-   * @param oldEmail old email used to look up the User object
-   * @param newEmail 
+   * @param oldEmail   old email used to look up the User object
+   * @param newEmail
    * @param password
    * @param name
    * @param age
@@ -147,7 +149,8 @@ public class UserServiceImpl implements UserService {
     ApiFuture<QuerySnapshot> oldFuture = dbFirestore.collection("user").whereEqualTo("email", oldEmail).get();
     ApiFuture<QuerySnapshot> newFuture = dbFirestore.collection("user").whereEqualTo("email", newEmail).get();
     // future.get() blocks on response
-    // this list should only be length 1 as each email must be unique in our database
+    // this list should only be length 1 as each email must be unique in our
+    // database
     List<QueryDocumentSnapshot> oldDocuments = oldFuture.get().getDocuments();
     List<QueryDocumentSnapshot> newDocuments = newFuture.get().getDocuments();
 
@@ -159,13 +162,14 @@ public class UserServiceImpl implements UserService {
     // new email has already existed, 2 scenarios:
     // 1. The new email is the same as the old email -> Okay
     // 2. The new email belongs to another account -> Error
-    if (!newDocuments.isEmpty())  {
+    if (!newDocuments.isEmpty()) {
       // the id associating with the new and old email
       String oldEmailId = retrieveUserIdByEmail(oldEmail);
       String newEmailId = retrieveUserIdByEmail(newEmail);
 
-      // the id of the 2 objects are different -> new email is used by a different account.
-      if (!oldEmailId.equals(newEmailId))  {
+      // the id of the 2 objects are different -> new email is used by a different
+      // account.
+      if (!oldEmailId.equals(newEmailId)) {
         throw new DatabaseException("New email has already existed");
       }
     }
@@ -183,7 +187,7 @@ public class UserServiceImpl implements UserService {
   }
 
   /**
-   * Delete a user by using the email 
+   * Delete a user by using the email
    * 
    * @param email
    * @return
@@ -197,7 +201,8 @@ public class UserServiceImpl implements UserService {
     // asynchronously retrieve multiple documents
     ApiFuture<QuerySnapshot> future = dbFirestore.collection("user").whereEqualTo("email", email).get();
     // future.get() blocks on response
-    // this list should only be length 1 as each email must be unique in our database
+    // this list should only be length 1 as each email must be unique in our
+    // database
     List<QueryDocumentSnapshot> documents = future.get().getDocuments();
 
     // the queried list is empty, throw an error
@@ -210,5 +215,28 @@ public class UserServiceImpl implements UserService {
 
     // return the query execution time
     return writeResult.get().getUpdateTime().toString();
+  }
+
+  /**
+   * Validate if the email address is valid or not using regular expression
+   * Here is the explanation for the email address matching regex pattern:
+   * + It allows numeric values from 0 to 9.
+   * + Both uppercase and lowercase letters from a to z are allowed.
+   * + Allowed are underscore “_”, hyphen “-“, and dot “.”
+   * + Dot isn't allowed at the start and end of the local part.
+   * + Consecutive dots aren't allowed.
+   * + For the local part, a maximum of 64 characters are allowed.
+   * 
+   * 
+   * @param email
+   * @return
+   * @throws InterruptedException
+   * @throws ExecutionException
+   */  
+  public static boolean emailValidation(String emailAddress) {
+    String regexPattern = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
+    return Pattern.compile(regexPattern)
+        .matcher(emailAddress)
+        .matches();
   }
 }

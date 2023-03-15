@@ -1,4 +1,4 @@
-package com.example.springboot.Services;
+package com.wheelshare.springboot.Services;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,8 +13,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.example.springboot.Models.Errors;
-import com.example.springboot.Models.MapNode;
+import com.wheelshare.springboot.Models.Errors;
+import com.wheelshare.springboot.Models.MapNode;
 
 import java.io.FileReader;
 

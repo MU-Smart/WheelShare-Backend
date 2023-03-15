@@ -1,10 +1,4 @@
-package com.example.springboot;
-
-import com.example.springboot.Models.MapNode;
-import com.example.springboot.Models.MapRoute;
-import com.example.springboot.Models.User;
-import com.example.springboot.Services.RouteServiceImpl;
-import com.example.springboot.Services.UserServiceImpl;
+package com.wheelshare.springboot;
 
 import java.util.Arrays;
 
@@ -14,7 +8,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.example.springboot.Services.MapServiceBuilderImpl;
+import com.wheelshare.springboot.Models.MapNode;
+import com.wheelshare.springboot.Models.MapRoute;
+import com.wheelshare.springboot.Models.User;
+import com.wheelshare.springboot.Services.MapServiceBuilderImpl;
+import com.wheelshare.springboot.Services.RouteServiceImpl;
+import com.wheelshare.springboot.Services.UserServiceImpl;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.util.ArrayList;

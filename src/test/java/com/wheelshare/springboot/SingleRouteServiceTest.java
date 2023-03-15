@@ -1,6 +1,5 @@
-package com.example.springboot;
+package com.wheelshare.springboot;
 
-import com.example.springboot.Models.MapNode;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
@@ -17,7 +16,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.example.springboot.Services.RouteService;
+import com.wheelshare.springboot.Models.MapNode;
+import com.wheelshare.springboot.Services.RouteService;
 
 @SpringBootTest
 @AutoConfigureMockMvc

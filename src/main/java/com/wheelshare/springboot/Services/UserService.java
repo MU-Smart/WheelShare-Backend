@@ -1,8 +1,8 @@
-package com.example.springboot.Services;
-
-import com.example.springboot.Models.User;
+package com.wheelshare.springboot.Services;
 
 import java.util.concurrent.ExecutionException;
+
+import com.wheelshare.springboot.Models.User;
 
 public interface UserService {
   String createUser(String email, String password, String name, int age, String gender, double height,
@@ -18,4 +18,6 @@ public interface UserService {
       double wc_height, double wc_width) throws InterruptedException, ExecutionException;
   
   String deleteUserByEmail(String email) throws InterruptedException, ExecutionException;
+
+  boolean emailValidation(String emailAddress);
 }

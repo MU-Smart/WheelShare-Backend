@@ -1,4 +1,4 @@
-package com.example.springboot.Services;
+package com.wheelshare.springboot.Services;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -8,8 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.example.springboot.Models.User;
-import com.example.springboot.Models.Errors;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
@@ -17,6 +15,8 @@ import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.cloud.FirestoreClient;
+import com.wheelshare.springboot.Models.Errors;
+import com.wheelshare.springboot.Models.User;
 
 @Service
 public class UserServiceImpl implements UserService {

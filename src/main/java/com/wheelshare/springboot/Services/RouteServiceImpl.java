@@ -1,13 +1,13 @@
-package com.example.springboot.Services;
-
-import com.example.springboot.Models.Errors;
-import com.example.springboot.Models.MapEdge;
-import com.example.springboot.Models.MapNode;
-import com.example.springboot.Models.MapRoute;
+package com.wheelshare.springboot.Services;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import com.wheelshare.springboot.Models.Errors;
+import com.wheelshare.springboot.Models.MapEdge;
+import com.wheelshare.springboot.Models.MapNode;
+import com.wheelshare.springboot.Models.MapRoute;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

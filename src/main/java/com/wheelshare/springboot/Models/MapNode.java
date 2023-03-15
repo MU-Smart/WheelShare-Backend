@@ -1,4 +1,4 @@
-package com.example.springboot.Models;
+package com.wheelshare.springboot.Models;
 
 import lombok.Data;
 

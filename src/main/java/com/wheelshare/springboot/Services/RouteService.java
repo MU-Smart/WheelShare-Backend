@@ -1,13 +1,13 @@
-package com.example.springboot.Services;
-
-import com.example.springboot.Models.MapNode;
-import com.example.springboot.Models.MapRoute;
+package com.wheelshare.springboot.Services;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.javatuples.Pair;
+
+import com.wheelshare.springboot.Models.MapNode;
+import com.wheelshare.springboot.Models.MapRoute;
 
 public interface RouteService {
     Long getClosestNode(double latitude, double longitude, Map<Long, MapNode> nodeMap);

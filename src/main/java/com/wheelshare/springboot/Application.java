@@ -1,4 +1,4 @@
-package com.example.springboot;
+package com.wheelshare.springboot;
 
 import java.io.File;
 import java.io.FileInputStream;

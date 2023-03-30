@@ -7,8 +7,9 @@ public enum Errors {
   INVALID_EMAIL("Invalid Email!"),
   // Errors for the MapBuilderService
   DUPLICATE_NODE_ID("Duplicate node id: "),
+  TYPE_UNAVAILABLE("Type unavailable: "),
   TAG_UNAVAILABLE("Tag unavailable: "),
-  INCLINE_NOT_NUMBER("Incline is not a number: "),
+  INVALID_INCLINE_FORMAT("Incline is not a number: "),
   BUILD_ERROR("Build Error"),
   // Errors for the RouteService
   INVALID_DECIMAL_VALUE("Decimal places should be greater than 0"),

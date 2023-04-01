@@ -22,6 +22,10 @@ import com.wheelshare.springboot.Models.MapNode;
 import com.wheelshare.springboot.Models.MapRoute;
 import com.wheelshare.springboot.Services.RouteService;
 
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @RunWith(SpringRunner.class)
@@ -33,14 +37,14 @@ public class MultipleRouteServiceTest {
   @Before
   public void init() {
     // Init data for the nodeMap
-    MapNode node0 = new MapNode(0, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 0.0, 0.0);
-    MapNode node1 = new MapNode(1, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 1.0, 2.0);
-    MapNode node2 = new MapNode(2, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 3.0, 2.0);
-    MapNode node3 = new MapNode(3, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 4.0, -1.0);
-    MapNode node4 = new MapNode(4, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 6.0, -1.0);
-    MapNode node5 = new MapNode(5, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 5.0, 0.0);
-    MapNode node6 = new MapNode(6, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 7.0, 2.0);
-
+    MapNode node0 = new MapNode(0, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 39.500, -84.699);
+    MapNode node1 = new MapNode(1, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 39.501, -84.697);
+    MapNode node2 = new MapNode(2, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 39.503, -84.697);
+    MapNode node3 = new MapNode(3, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 39.504, -84.7);
+    MapNode node4 = new MapNode(4, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 39.506, -84.7);
+    MapNode node5 = new MapNode(5, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 39.505, -84.699);
+    MapNode node6 = new MapNode(6, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 39.507, -84.697);
+    
     nodeMapTest.put(0L, node0);
     nodeMapTest.put(1L, node1);
     nodeMapTest.put(2L, node2);
@@ -93,7 +97,7 @@ public class MultipleRouteServiceTest {
   @Test
   public void buildMultipleRouteTest() {
     // path from node 0 to node 6
-    List<List<Long>> routeList = routeService.buildMultipleRoute(0, 0, 7.0, 2.0, 1.2, nodeMapTest, edgeMapTest);
+    List<List<Long>> routeList = routeService.buildMultipleRoute(39.500, -84.699, 39.507, -84.697, 1.2, nodeMapTest, edgeMapTest);
     List<Long> route1 = Arrays.asList(0L, 1L, 2L, 3L, 5L, 4L, 6L);
     List<Long> route2 = Arrays.asList(0L, 1L, 2L, 3L, 5L, 6L);
     List<Long> route3 = Arrays.asList(0L, 1L, 2L, 4L, 5L, 6L);

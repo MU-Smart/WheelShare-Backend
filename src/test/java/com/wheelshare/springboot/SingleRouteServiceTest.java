@@ -19,6 +19,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.wheelshare.springboot.Models.MapNode;
 import com.wheelshare.springboot.Services.RouteService;
 
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @RunWith(SpringRunner.class)
@@ -32,17 +36,17 @@ public class SingleRouteServiceTest {
   @Before
   public void init() {
     // Init data for the nodeMap
-    MapNode node0 = new MapNode(0, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 0.0, 0.0);
-    MapNode node1 = new MapNode(1, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 1.0, 2.0);
-    MapNode node2 = new MapNode(2, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 3.0, 2.0);
-    MapNode node3 = new MapNode(3, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 4.0, -1.0);
-    MapNode node4 = new MapNode(4, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 6.0, -1.0);
-    MapNode node5 = new MapNode(5, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 5.0, 0.0);
-    MapNode node6 = new MapNode(6, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 7.0, 2.0);
-    MapNode node7 = new MapNode(7, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 1.0, -1.0);
-    MapNode node8 = new MapNode(8, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 3.0, 1.0);
-    MapNode node9 = new MapNode(9, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 3.0, -1.0);
-    MapNode node10 = new MapNode(10, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 7.0, -1.0);
+    MapNode node0 = new MapNode(0, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 39.500, -84.699);
+    MapNode node1 = new MapNode(1, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 39.501, -84.697);
+    MapNode node2 = new MapNode(2, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 39.503, -84.697);
+    MapNode node3 = new MapNode(3, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 39.504, -84.7);
+    MapNode node4 = new MapNode(4, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 39.506, -84.7);
+    MapNode node5 = new MapNode(5, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 39.505, -84.699);
+    MapNode node6 = new MapNode(6, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 39.507, -84.697);
+    MapNode node7 = new MapNode(7, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 39.501, -84.7);
+    MapNode node8 = new MapNode(8, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 39.503, -84.698);
+    MapNode node9 = new MapNode(9, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 39.503, -84.7);
+    MapNode node10 = new MapNode(10, 5, 67510357, "2019-02-24T08:16:29Z", "Minh Nguyen", 33757, 39.507, -84.7);
 
     nodeMapTest.put(0L, node0);
     nodeMapTest.put(1L, node1);
@@ -122,7 +126,6 @@ public class SingleRouteServiceTest {
     preNodeMap.put(3L, 4L);
     preNodeMap.put(10L, 0L);
     preNodeMap.put(0L, 5L);
-
   }
 
   @Autowired
@@ -137,26 +140,23 @@ public class SingleRouteServiceTest {
    *  */ 
   @Test
   public void getClosestNodeTest() {
-    assertEquals(0L, routeService.getClosestNode(-1.0, -1.0, nodeMapTest));
-    assertEquals(1L, routeService.getClosestNode(1.0, 3.0, nodeMapTest));
-    assertEquals(7L, routeService.getClosestNode(2.0, -1.0, nodeMapTest));
-    assertEquals(2L, routeService.getClosestNode(4.0, 4.0, nodeMapTest));
-    assertEquals(5L, routeService.getClosestNode(5.0, -1.0, nodeMapTest));
+    assertEquals(1L, routeService.getClosestNode(39.501, -84.6971, nodeMapTest));
+    assertEquals(9L, routeService.getClosestNode(39.5032, -84.7, nodeMapTest));
   }
 
   @Test
   public void buildSingleRouteTest() {
     // path from node 0 to node 5
     List<Long> expected1 = Arrays.asList(0L,1L,2L,6L,10L,4L, 3L, 5L);
-    assertEquals(expected1, routeService.buildSingleRoute(0, 0, 5, 0, nodeMapTest, edgeMapTest, weightMapTest));
+    assertEquals(expected1, routeService.buildSingleRoute(39.500, -84.699, 39.505, -84.699, nodeMapTest, edgeMapTest, weightMapTest));
     
     // path from node 7 to node 3
     List<Long> expected2 = Arrays.asList(7L,0L,1L,2L,6L,10L, 4L,3L);
-    assertEquals(expected2, routeService.buildSingleRoute(1, -1, 4, -1, nodeMapTest, edgeMapTest, weightMapTest));
+    assertEquals(expected2, routeService.buildSingleRoute(39.501, -84.7, 39.504, -84.7, nodeMapTest, edgeMapTest, weightMapTest));
 
     // path from node 4 to node 3
     List<Long> expected3 = Arrays.asList(4L,3L);
-    assertEquals(expected3, routeService.buildSingleRoute(6, -1, 4, -1, nodeMapTest, edgeMapTest, weightMapTest));
+    assertEquals(expected3, routeService.buildSingleRoute(39.506, -84.7, 39.504, -84.7, nodeMapTest, edgeMapTest, weightMapTest));
   }
 
   @Test

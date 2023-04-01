@@ -48,9 +48,10 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 			String absoluteFilePath = new File("").getAbsolutePath();
 
 			// * Read the file in
-			Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath + "/src/main/resources/mapData.json"));
+			Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath +
+			"/src/main/resources/mapData.json"));
 			// Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath +
-			// "/wheel-share-backend/mapData.json"));
+			// 		"/wheel-share-backend/mapData.json"));
 			JSONObject jsonObject = (JSONObject) jsonFileObject;
 
 			// * Clean up all of the hashmaps to put new data in
@@ -90,9 +91,7 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 						throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
 								Errors.DUPLICATE_NODE_ID.getMessage() + Long.toString(nodeId));
 					}
-					if (nodeId == 9125448067L) {
-						System.out.println("Yessir");
-					}
+
 					MapNode mapNode = new MapNode(nodeId, version, changeSet, timestamp, user, userId, latitude, longtitude);
 					nodeMap.put(nodeId, mapNode);
 				}
@@ -123,14 +122,14 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 					// Check to see if we can update our weight for this edge
 					if (!currElem.containsKey("tags")) {
 						waysWithoutTag++;
-						// log.warn(Errors.TAG_UNAVAILABLE.getMessage() + currElem.get("id"));
+						log.warn(Errors.TAG_UNAVAILABLE.getMessage() + currElem.get("id"));
 					} else {
 						JSONObject tagOject = (JSONObject) currElem.get("tags");
 						try {
 							weight = Double.parseDouble(tagOject.get("incline").toString());
 						} catch (NumberFormatException | NullPointerException e) {
 							waysWithInvalidIncline++;
-							// log.info(Errors.INVALID_INCLINE_FORMAT.getMessage() + currElem.get("id"));
+							log.warn(Errors.INVALID_INCLINE_FORMAT.getMessage() + currElem.get("id"));
 						}
 					}
 
@@ -140,6 +139,13 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 						int endIndex = startIndex + 1;
 						long endNode = Long.parseLong(currWayNodeList.get(endIndex).toString());
 
+						/**
+						 * * Eliminate some nodes that is not in the node map.
+						 * * When downloading the data from OSM, it includes all paths that contains the
+						 * * node within out predefined bound.
+						 * * These paths usually contain some other nodes outside the bounds
+						 * * -> We have to omit those nodes
+						 */
 						if (!nodeMap.containsKey(startNode) || !nodeMap.containsKey(endNode)) {
 							continue;
 						}

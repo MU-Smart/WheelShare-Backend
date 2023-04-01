@@ -9,9 +9,10 @@ public enum Errors {
   DUPLICATE_NODE_ID("Duplicate node id: "),
   TYPE_UNAVAILABLE("Type unavailable: "),
   TAG_UNAVAILABLE("Tag unavailable: "),
-  INVALID_INCLINE_FORMAT("Incline is not a number: "),
+  INVALID_INCLINE_FORMAT("Incline does not exist or is not a number: "),
   BUILD_ERROR("Build Error"),
   // Errors for the RouteService
+  NODE_OUT_OF_BOUND("This coordinate is out of predefined bound"),
   INVALID_DECIMAL_VALUE("Decimal places should be greater than 0"),
   INVALID_PATH("Path containing only 1 node!");
 

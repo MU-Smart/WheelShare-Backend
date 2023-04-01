@@ -22,10 +22,6 @@ import com.wheelshare.springboot.Models.MapNode;
 import com.wheelshare.springboot.Models.MapRoute;
 import com.wheelshare.springboot.Services.RouteService;
 
-import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 @SpringBootTest
 @AutoConfigureMockMvc
 @RunWith(SpringRunner.class)

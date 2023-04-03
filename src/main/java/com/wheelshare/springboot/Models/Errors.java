@@ -1,6 +1,9 @@
 package com.wheelshare.springboot.Models;
 
 public enum Errors {
+  // Errors for the API endpoint
+  NODE_NOT_FOUND("Node not found"),
+  NODE_PAIR_NOT_FOUND("Node not found"),
   // Errors for the UserService
   DUPLICATE_EMAIL("This email is duplicated!"),
   EMPTY_EMAIL("This email does not exist!"),

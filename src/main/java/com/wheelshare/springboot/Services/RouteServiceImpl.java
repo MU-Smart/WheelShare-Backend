@@ -50,6 +50,10 @@ public class RouteServiceImpl implements RouteService {
      * @return
      */
     public Long getClosestNode(double latitude, double longitude, Map<Long, MapNode> nodeMap) {
+        if (!checkMapBound(latitude, longitude)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, Errors.NODE_OUT_OF_BOUND.getMessage());
+        }
+        
         long nearestNodeId = -1L;
         double minDistance = Double.MAX_VALUE;
 
@@ -255,11 +259,7 @@ public class RouteServiceImpl implements RouteService {
         }
 
         List<Long> neighborList = edgeMap.get(currNodeId);
-        System.out.println(currNodeId);
-        System.out.println(neighborList);
         for (long neighbor : neighborList) {
-            System.out.println(neighbor);
-            System.out.println(nodeMap.get(neighbor));
             MapNode neighborNode = nodeMap.get(neighbor);
             if (neighborNode.distanceTo(centerLatitude, centerLongtitude) > radius) {
                 continue;

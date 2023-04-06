@@ -126,7 +126,8 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 					} else {
 						JSONObject tagOject = (JSONObject) currElem.get("tags");
 
-						if (tagOject.containsKey("indoor") && tagOject.get("indoor").equals("yes"))	{
+						// ! Eliminate indoors nodes
+						if (tagOject.containsKey("indoor") && tagOject.get("indoor").equals("yes")) {
 							for (int closedAreaNodeIndex = 0; closedAreaNodeIndex < currWayNodeList.size(); closedAreaNodeIndex++) {
 								long closedAreaNodeId = Long.parseLong(currWayNodeList.get(closedAreaNodeIndex).toString());
 								closedNodeSet.add(closedAreaNodeId);

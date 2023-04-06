@@ -64,7 +64,7 @@ public class RouteServiceImpl implements RouteService {
             double currDistance = currNode.distanceTo(latitude, longitude);
 
             // * We do not consider nodes that is unconnected
-            if (!edgeMap.containsKey(nodeId))    {
+            if (!edgeMap.containsKey(nodeId)) {
                 continue;
             }
 

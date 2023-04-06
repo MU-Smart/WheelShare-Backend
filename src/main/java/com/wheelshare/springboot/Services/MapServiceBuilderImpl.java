@@ -125,6 +125,18 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 						log.warn(Errors.TAG_UNAVAILABLE.getMessage() + currElem.get("id"));
 					} else {
 						JSONObject tagOject = (JSONObject) currElem.get("tags");
+
+						if (tagOject.containsKey("indoor") && tagOject.get("indoor").equals("yes"))	{
+							for (int closedAreaNodeIndex = 0; closedAreaNodeIndex < currWayNodeList.size(); closedAreaNodeIndex++) {
+								long closedAreaNodeId = Long.parseLong(currWayNodeList.get(closedAreaNodeIndex).toString());
+								closedNodeSet.add(closedAreaNodeId);
+								if (nodeMap.containsKey(closedAreaNodeId)) {
+									nodeMap.remove(closedAreaNodeId);
+								}
+							}
+							continue;
+						}
+
 						try {
 							weight = Double.parseDouble(tagOject.get("incline").toString());
 						} catch (NumberFormatException | NullPointerException e) {
@@ -144,7 +156,7 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 						 * * When downloading the data from OSM, it includes all paths that contains the
 						 * * node within out predefined bound.
 						 * * These paths usually contain some other nodes outside the bounds
-						 * * -> We have to omit those nodes
+						 * * -> We have to skip those edges
 						 */
 						if (!nodeMap.containsKey(startNode) || !nodeMap.containsKey(endNode)) {
 							continue;

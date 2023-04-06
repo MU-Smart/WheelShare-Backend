@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.security.InvalidAlgorithmParameterException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,17 +50,23 @@ public class RouteServiceImpl implements RouteService {
      * @param nodeMap    the hashmap containing the node
      * @return
      */
-    public Long getClosestNode(double latitude, double longitude, Map<Long, MapNode> nodeMap) {
+    public Long getClosestNode(double latitude, double longitude,
+            Map<Long, MapNode> nodeMap, Map<Long, List<Long>> edgeMap) {
         if (!checkMapBound(latitude, longitude)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, Errors.NODE_OUT_OF_BOUND.getMessage());
         }
-        
+
         long nearestNodeId = -1L;
         double minDistance = Double.MAX_VALUE;
 
         for (long nodeId : nodeMap.keySet()) {
             MapNode currNode = nodeMap.get(nodeId);
             double currDistance = currNode.distanceTo(latitude, longitude);
+
+            // * We do not consider nodes that is unconnected
+            if (!edgeMap.containsKey(nodeId))    {
+                continue;
+            }
 
             if (currDistance < minDistance) {
                 minDistance = currDistance;
@@ -89,9 +96,9 @@ public class RouteServiceImpl implements RouteService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, Errors.NODE_OUT_OF_BOUND.getMessage());
         }
 
-        long startNodeId = getClosestNode(srcLat, srcLon, nodeMap);
-        long endNodeId = getClosestNode(destLat, destLon, nodeMap);
-        MapNode startNode = nodeMap.get(startNodeId);
+        long startNodeId = getClosestNode(srcLat, srcLon, nodeMap, edgeMap);
+        long endNodeId = getClosestNode(destLat, destLon, nodeMap, edgeMap);
+        MapNode endNode = nodeMap.get(endNodeId);
 
         Map<Long, Long> preNodeMap = new HashMap<Long, Long>();
         Set<Long> visitedNodeSet = new HashSet<Long>();
@@ -110,24 +117,25 @@ public class RouteServiceImpl implements RouteService {
             }
         });
 
-        visitedNodeSet.add(endNodeId);
+        visitedNodeSet.add(startNodeId);
 
-        for (long neighborNodeId : edgeMap.get(endNodeId)) {
+        for (long neighborNodeId : edgeMap.get(startNodeId)) {
             // Construct the edge
-            Pair<Long, Long> currPair = new Pair<Long, Long>(endNodeId, neighborNodeId);
+            Pair<Long, Long> currPair = new Pair<Long, Long>(startNodeId, neighborNodeId);
+            System.out.println(currPair.toString());
             double weight = weightMap.get(currPair);
-            MapEdge newEgde = new MapEdge(weight, endNodeId, neighborNodeId);
+            MapEdge newEgde = new MapEdge(weight, startNodeId, neighborNodeId);
 
             // Construct the distance value
             MapNode currNode = nodeMap.get(neighborNodeId);
-            double distanceToStartNode = startNode.distanceTo(currNode.getLatitute(), currNode.getLongtitude());
+            double distanceToEndNode = endNode.distanceTo(currNode.getLatitute(), currNode.getLongtitude());
 
             // Add to the edgeHeap
-            Pair<MapEdge, Double> newEdgeDistancePair = new Pair<MapEdge, Double>(newEgde, distanceToStartNode);
+            Pair<MapEdge, Double> newEdgeDistancePair = new Pair<MapEdge, Double>(newEgde, distanceToEndNode);
             edgeHeap.add(newEdgeDistancePair);
         }
 
-        while (!preNodeMap.containsKey(startNodeId) && !edgeHeap.isEmpty()) {
+        while (!preNodeMap.containsKey(endNodeId) && !edgeHeap.isEmpty()) {
             // * Pop the max edge + distance pair out
             Pair<MapEdge, Double> currEdgeDistancePair = edgeHeap.remove();
             MapEdge maxEdge = currEdgeDistancePair.getValue0();
@@ -152,14 +160,13 @@ public class RouteServiceImpl implements RouteService {
 
                 // Construct the distance value
                 MapNode currNode = nodeMap.get(neighborNodeId);
-                double distanceToStartNode = startNode.distanceTo(currNode.getLatitute(), currNode.getLongtitude());
+                double distanceToStartNode = endNode.distanceTo(currNode.getLatitute(), currNode.getLongtitude());
 
                 // Add to the edgeHeap
                 Pair<MapEdge, Double> newEdgeDistancePair = new Pair<MapEdge, Double>(newEgde, distanceToStartNode);
                 edgeHeap.add(newEdgeDistancePair);
             }
         }
-
         return getSingleRoute(preNodeMap, startNodeId, endNodeId);
     }
 
@@ -172,14 +179,15 @@ public class RouteServiceImpl implements RouteService {
      */
     public List<Long> getSingleRoute(Map<Long, Long> preNodeMap, long startNodeId, long endNodeId) {
         List<Long> result = new ArrayList<>();
-        long currNodeId = startNodeId;
+        long currNodeId = endNodeId;
 
-        while (currNodeId != endNodeId) {
+        while (currNodeId != startNodeId) {
             result.add(currNodeId);
             currNodeId = preNodeMap.get(currNodeId);
         }
 
-        result.add(endNodeId);
+        result.add(startNodeId);
+        Collections.reverse(result);
         return result;
     }
 
@@ -208,8 +216,8 @@ public class RouteServiceImpl implements RouteService {
 
         List<List<Long>> multiPathResult = new ArrayList<>();
 
-        long startNodeId = getClosestNode(srcLat, srcLon, nodeMap);
-        long endNodeId = getClosestNode(destLat, destLon, nodeMap);
+        long startNodeId = getClosestNode(srcLat, srcLon, nodeMap, edgeMap);
+        long endNodeId = getClosestNode(destLat, destLon, nodeMap, edgeMap);
         MapNode startNode = nodeMap.get(startNodeId);
         MapNode endNode = nodeMap.get(endNodeId);
 

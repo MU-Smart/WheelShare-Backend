@@ -66,7 +66,7 @@ public class WheelShareController {
 	@GetMapping("/api/getClosestNode")
 	@ResponseBody
 	public MapNode getClosestNode(@RequestParam double srcLat, @RequestParam double srcLon) {
-		Long nodeId = routeService.getClosestNode(srcLat, srcLon, mapService.getNodeMap());
+		Long nodeId = routeService.getClosestNode(srcLat, srcLon, mapService.getNodeMap(), mapService.getEdgeMap());
 		return mapService.getNodeMap().get(nodeId);
 	}
 
@@ -82,7 +82,7 @@ public class WheelShareController {
 	@GetMapping("/api/getNodeNeighborsByCoor")
 	@ResponseBody
 	public List<Long> getNodeNeighborsByCoor(@RequestParam double srcLat, @RequestParam double srcLon) {
-		Long nodeId = routeService.getClosestNode(srcLat, srcLon, mapService.getNodeMap());
+		Long nodeId = routeService.getClosestNode(srcLat, srcLon, mapService.getNodeMap(), mapService.getEdgeMap());
 		return getNodeNeighborsById(nodeId);
 	}
 
@@ -102,8 +102,8 @@ public class WheelShareController {
 	public Double getEdgeWeightByCoor(@RequestParam double srcLat, @RequestParam double srcLon,
 			@RequestParam double desLat,
 			@RequestParam double desLon) {
-		Long startNodeId = routeService.getClosestNode(srcLat, srcLon, mapService.getNodeMap());
-		Long endNodeId = routeService.getClosestNode(desLat, desLon, mapService.getNodeMap());
+		Long startNodeId = routeService.getClosestNode(srcLat, srcLon, mapService.getNodeMap(), mapService.getEdgeMap());
+		Long endNodeId = routeService.getClosestNode(desLat, desLon, mapService.getNodeMap(), mapService.getEdgeMap());
 
 		return getEdgeWeightById(startNodeId, endNodeId);
 	}

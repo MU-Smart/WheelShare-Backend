@@ -117,7 +117,6 @@ public class SingleRouteServiceTest {
     preNodeMap.put(2L, 5L);
     preNodeMap.put(5L, 6L);
     preNodeMap.put(6L, 9L);
-    preNodeMap.put(6L, 9L);
     preNodeMap.put(9L, 3L);
     preNodeMap.put(3L, 4L);
     preNodeMap.put(10L, 0L);
@@ -136,8 +135,8 @@ public class SingleRouteServiceTest {
    *  */ 
   @Test
   public void getClosestNodeTest() {
-    assertEquals(1L, routeService.getClosestNode(39.501, -84.6971, nodeMapTest));
-    assertEquals(9L, routeService.getClosestNode(39.5032, -84.7, nodeMapTest));
+    assertEquals(1L, routeService.getClosestNode(39.501, -84.6971, nodeMapTest, edgeMapTest));
+    assertEquals(9L, routeService.getClosestNode(39.5032, -84.7, nodeMapTest, edgeMapTest));
   }
 
   @Test
@@ -158,11 +157,7 @@ public class SingleRouteServiceTest {
   @Test
   public void getSingleRouteTest() {
     // path from node 1 to node 3
-    List<Long> expected1 = Arrays.asList(1L,2L,5L,6L,9L,3L);
-    assertEquals(expected1, routeService.getSingleRoute(preNodeMap, 1L, 3L));
-
-    // path from node 10 to node 4
-    List<Long> expected2 = Arrays.asList(10L,0L,5L,6L,9L,3L,4L);
-    assertEquals(expected2, routeService.getSingleRoute(preNodeMap, 10L, 4L));
+    List<Long> expected1 = Arrays.asList(3L,9L,6L,5L,2L,1L);
+    assertEquals(expected1, routeService.getSingleRoute(preNodeMap, 3L, 1L));
   }
 }

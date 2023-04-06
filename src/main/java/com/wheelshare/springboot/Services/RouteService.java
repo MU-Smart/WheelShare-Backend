@@ -12,7 +12,7 @@ import com.wheelshare.springboot.Models.MapRoute;
 public interface RouteService {
     boolean checkMapBound(double latitude, double longitude);
 
-    Long getClosestNode(double latitude, double longitude, Map<Long, MapNode> nodeMap);
+    Long getClosestNode(double latitude, double longitude, Map<Long, MapNode> nodeMap, Map<Long, List<Long>> edgeMap);
 
     List<Long> buildSingleRoute (double srcLat, double srcLon, double destLat, double destLon,
                            Map<Long, MapNode> nodeMap, Map<Long, List<Long>> edgeMap, 

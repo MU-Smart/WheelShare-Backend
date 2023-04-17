@@ -102,7 +102,6 @@ public class RouteServiceImpl implements RouteService {
 
         Map<Long, Long> preNodeMap = new HashMap<Long, Long>();
         Set<Long> visitedNodeSet = new HashSet<Long>();
-        // PriorityQueue<MapEdge> edgeHeap = new PriorityQueue<>();
         PriorityQueue<Pair<MapEdge, Double>> edgeHeap = new PriorityQueue<>(new Comparator<Pair<MapEdge, Double>>() {
             @Override
             public int compare(Pair<MapEdge, Double> pair1, Pair<MapEdge, Double> pair2) {
@@ -122,7 +121,6 @@ public class RouteServiceImpl implements RouteService {
         for (long neighborNodeId : edgeMap.get(startNodeId)) {
             // Construct the edge
             Pair<Long, Long> currPair = new Pair<Long, Long>(startNodeId, neighborNodeId);
-            System.out.println(currPair.toString());
             double weight = weightMap.get(currPair);
             MapEdge newEgde = new MapEdge(weight, startNodeId, neighborNodeId);
 

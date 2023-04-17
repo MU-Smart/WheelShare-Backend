@@ -38,6 +38,7 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 	private Map<Long, List<Long>> edgeMap = new HashMap<Long, List<Long>>();
 	private Map<Pair<Long, Long>, Double> weightMap = new HashMap<Pair<Long, Long>, Double>();
 	private HashSet<Long> closedNodeSet = new HashSet<Long>();
+	private HashSet<Long> openNodeSet = new HashSet<Long>();
 
 	JSONParser parser = new JSONParser();
 
@@ -48,10 +49,14 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 			String absoluteFilePath = new File("").getAbsolutePath();
 
 			// * Read the file in
+			// Local mapData location
 			Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath +
 					"/src/main/resources/mapData.json"));
+					
+			// Server mapData location
 			// Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath +
 			// "/mapData.json"));
+			
 			JSONObject jsonObject = (JSONObject) jsonFileObject;
 
 			// * Clean up all of the hashmaps to put new data in
@@ -101,22 +106,24 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 					JSONArray currWayNodeList = (JSONArray) currElem.get("nodes");
 					double weight = 100;
 
-					// ! Eliminate closed areas are they will cause errors for the algorithm
-					// * When reading OSM data, you can identify closed ways by checking if the
-					// * first and last nodes in the way are the same. If the first and last nodes
-					// * are the same, then the way is closed and represents a closed polygon.
 					long firstNodeInWay = Long.parseLong(currWayNodeList.get(0).toString());
 					long lastNodeInWay = Long.parseLong(currWayNodeList.get(currWayNodeList.size() - 1).toString());
 
+					/**
+					 * * We are adding nodes into 2 seperate set: closedNodeSet and openNodeSet
+					 * * closedNodeSet is the set containing nodes belonging to a closed region/way
+					 * * openNodeSet is the set containing nodes belonging to an open region/way
+					 */
 					if (firstNodeInWay == lastNodeInWay) {
-						for (int closedAreaNodeIndex = 0; closedAreaNodeIndex < currWayNodeList.size(); closedAreaNodeIndex++) {
-							long closedAreaNodeId = Long.parseLong(currWayNodeList.get(closedAreaNodeIndex).toString());
-							closedNodeSet.add(closedAreaNodeId);
-							if (nodeMap.containsKey(closedAreaNodeId)) {
-								nodeMap.remove(closedAreaNodeId);
-							}
+						for (int nodeIndex = 0; nodeIndex < currWayNodeList.size(); nodeIndex++) {
+							long nodeIndexId = Long.parseLong(currWayNodeList.get(nodeIndex).toString());
+							closedNodeSet.add(nodeIndexId);
 						}
-						continue;
+					} else {
+						for (int nodeIndex = 0; nodeIndex < currWayNodeList.size(); nodeIndex++) {
+							long nodeIndexId = Long.parseLong(currWayNodeList.get(nodeIndex).toString());
+							openNodeSet.add(nodeIndexId);
+						}
 					}
 
 					// Check to see if we can update our weight for this edge
@@ -125,19 +132,6 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 						log.warn(Errors.TAG_UNAVAILABLE.getMessage() + currElem.get("id"));
 					} else {
 						JSONObject tagOject = (JSONObject) currElem.get("tags");
-
-						// ! Eliminate indoors nodes
-						if (tagOject.containsKey("indoor") && tagOject.get("indoor").equals("yes")) {
-							for (int closedAreaNodeIndex = 0; closedAreaNodeIndex < currWayNodeList.size(); closedAreaNodeIndex++) {
-								long closedAreaNodeId = Long.parseLong(currWayNodeList.get(closedAreaNodeIndex).toString());
-								closedNodeSet.add(closedAreaNodeId);
-								if (nodeMap.containsKey(closedAreaNodeId)) {
-									nodeMap.remove(closedAreaNodeId);
-								}
-							}
-							continue;
-						}
-
 						try {
 							weight = Double.parseDouble(tagOject.get("incline").toString());
 						} catch (NumberFormatException | NullPointerException e) {
@@ -151,17 +145,6 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 						long startNode = Long.parseLong(currWayNodeList.get(startIndex).toString());
 						int endIndex = startIndex + 1;
 						long endNode = Long.parseLong(currWayNodeList.get(endIndex).toString());
-
-						/**
-						 * * Eliminate some nodes that is not in the node map.
-						 * * When downloading the data from OSM, it includes all paths that contains the
-						 * * node within out predefined bound.
-						 * * These paths usually contain some other nodes outside the bounds
-						 * * -> We have to skip those edges
-						 */
-						if (!nodeMap.containsKey(startNode) || !nodeMap.containsKey(endNode)) {
-							continue;
-						}
 
 						List<Long> startNodeList = edgeMap.get(startNode);
 						List<Long> endNodeList = edgeMap.get(endNode);
@@ -192,42 +175,34 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 				}
 			}
 
-			// -----------------Clean up Weight and Edge Map-----------------
+			// -----------------Data Clean Up-----------------
 			/**
-			 * * We need to clean this up becauase the main loop might missed some
-			 * * nodes that is actually a part of a closed region
-			 * * For example, take an node which is the entrance in Kreger Hall.
-			 * * That node belongs to the closed region (the Kreger Hall Building)
-			 * * But it is also belongs to an outer edge. We want to omit this
-			 * * node since because it does not exist in the nodeMap (because it is deleted
-			 * * when we encountered the closed region) but it does exist in the edgeMap
-			 * * (because it shows up in the outer edge, which is not a closed region)
-			 * * -> Causing problems to the algo.
+			 * * This part is to clean up all the nodes that
+			 * * only belongs to the closedNodeSet
+			 * * These node lies within a closed region so they are not useful
+			 * * for what we are considering.
 			 */
+			for (long nodeId : closedNodeSet) {
+				if (!openNodeSet.contains(nodeId)) {
+					// remove this node from the node map
+					nodeMap.remove(nodeId);
 
-			Iterator<Long> nodeIterator = edgeMap.keySet().iterator();
-			while (nodeIterator.hasNext()) {
-				Long nodeId = nodeIterator.next();
-				List<Long> neighborList = edgeMap.get(nodeId);
+					// check for every of its neighbor
+					for (long neighborId : edgeMap.get(nodeId)) {
+						List<Long> neighborNeighBorList = edgeMap.get(neighborId);
+						// remove it from the neighbor's neighbor list in the edge map
+						neighborNeighBorList.remove(nodeId);
 
-				if (closedNodeSet.contains(nodeId)) {
-					nodeIterator.remove(); // Remove the entire entry from the map
-				}
-
-				Iterator<Long> neighborIterator = neighborList.iterator();
-				while (neighborIterator.hasNext()) {
-					Long neighbor = neighborIterator.next();
-					if (closedNodeSet.contains(neighbor)) {
-						neighborIterator.remove(); // Remove the neighbor from the list
+						// remove the pair of this node and the current neighbor in the weight map
+						Pair<Long, Long> startEndNodePair = new Pair<Long, Long>(nodeId, neighborId);
+						Pair<Long, Long> endStartNodePair = new Pair<Long, Long>(neighborId, nodeId);
+						weightMap.remove(startEndNodePair);
+						weightMap.remove(endStartNodePair);
 					}
-				}
-			}
 
-			Iterator<Pair<Long, Long>> iterator = weightMap.keySet().iterator();
-			while (iterator.hasNext()) {
-				Pair<Long, Long> key = iterator.next();
-				if (closedNodeSet.contains(key.getValue(0)) || closedNodeSet.contains(key.getValue(1))) {
-					iterator.remove();
+					// remove this node from the edge map
+					// At this point, this node basically does not exist in our data
+					edgeMap.remove(nodeId);
 				}
 			}
 

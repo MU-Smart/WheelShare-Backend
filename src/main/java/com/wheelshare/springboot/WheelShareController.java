@@ -35,27 +35,27 @@ public class WheelShareController {
 	private UserServiceImpl userService;
 
 	// ----------------------- Map Endpoint -------------------------
-	@GetMapping("/api/health")
+	@GetMapping("/webapi/health")
 	public String healthCheck() {
 		return "Health: 100%! The backend server is up and running!";
 	}
 
-	@GetMapping("/api/nodeMap")
+	@GetMapping("/webapi/nodeMap")
 	public String getNodeMap() {
 		return mapService.getNodeMap().toString();
 	}
 
-	@GetMapping("/api/edgeMap")
+	@GetMapping("/webapi/edgeMap")
 	public String getEdgeMap() {
 		return mapService.getEdgeMap().toString();
 	}
 
-	@GetMapping("/api/weightMap")
+	@GetMapping("/webapi/weightMap")
 	public String getWeightMap() {
 		return mapService.getWeightMap().toString();
 	}
 
-	@GetMapping("/api/getNodeById")
+	@GetMapping("/webapi/getNodeById")
 	public MapNode getNodeById(@RequestParam long nodeId) {
 		if (!mapService.getNodeMap().containsKey(nodeId)) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Errors.NODE_NOT_FOUND.getMessage());
@@ -63,14 +63,14 @@ public class WheelShareController {
 		return mapService.getNodeMap().get(nodeId);
 	}
 
-	@GetMapping("/api/getClosestNode")
+	@GetMapping("/webapi/getClosestNode")
 	@ResponseBody
 	public MapNode getClosestNode(@RequestParam double srcLat, @RequestParam double srcLon) {
 		Long nodeId = routeService.getClosestNode(srcLat, srcLon, mapService.getNodeMap(), mapService.getEdgeMap());
 		return mapService.getNodeMap().get(nodeId);
 	}
 
-	@GetMapping("/api/getNodeNeighborsById")
+	@GetMapping("/webapi/getNodeNeighborsById")
 	public List<Long> getNodeNeighborsById(@RequestParam long nodeId) {
 		if (!mapService.getEdgeMap().containsKey(nodeId)) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Errors.NODE_NOT_FOUND.getMessage());
@@ -79,14 +79,14 @@ public class WheelShareController {
 		return mapService.getEdgeMap().get(nodeId);
 	}
 
-	@GetMapping("/api/getNodeNeighborsByCoor")
+	@GetMapping("/webapi/getNodeNeighborsByCoor")
 	@ResponseBody
 	public List<Long> getNodeNeighborsByCoor(@RequestParam double srcLat, @RequestParam double srcLon) {
 		Long nodeId = routeService.getClosestNode(srcLat, srcLon, mapService.getNodeMap(), mapService.getEdgeMap());
 		return getNodeNeighborsById(nodeId);
 	}
 
-	@GetMapping("/api/getEdgeWeightById")
+	@GetMapping("/webapi/getEdgeWeightById")
 	@ResponseBody
 	public Double getEdgeWeightById(@RequestParam long startNodeId, @RequestParam long endNodeId) {
 		Pair<Long, Long> nodePair = new Pair<Long, Long>(startNodeId, endNodeId);
@@ -97,7 +97,7 @@ public class WheelShareController {
 		return mapService.getWeightMap().get(nodePair);
 	}
 
-	@GetMapping("/api/getEdgeWeightByCoor")
+	@GetMapping("/webapi/getEdgeWeightByCoor")
 	@ResponseBody
 	public Double getEdgeWeightByCoor(@RequestParam double srcLat, @RequestParam double srcLon,
 			@RequestParam double desLat,
@@ -108,7 +108,7 @@ public class WheelShareController {
 		return getEdgeWeightById(startNodeId, endNodeId);
 	}
 
-	@GetMapping("/api/getSingleRoute")
+	@GetMapping("/webapi/getSingleRoute")
 	@ResponseBody
 	public MapRoute getSingleRoute(@RequestParam double srcLat, @RequestParam double srcLon,
 			@RequestParam double destLat, @RequestParam double destLon) throws InvalidAlgorithmParameterException {
@@ -124,7 +124,7 @@ public class WheelShareController {
 		return routeService.routeStatisticGeneration(nodeIdRouteList, nodeMap, weightMap);
 	}
 
-	@GetMapping("/api/getMultipleRoute")
+	@GetMapping("/webapi/getMultipleRoute")
 	@ResponseBody
 	public List<MapRoute> getMultipleRoute(@RequestParam double srcLat, @RequestParam double srcLon,
 			@RequestParam double destLat, @RequestParam double destLon, @RequestParam double radiusCoefficent)
@@ -148,7 +148,7 @@ public class WheelShareController {
 	}
 
 	// ----------------------- Users Endpoint -------------------------
-	@GetMapping("/api/createUser")
+	@GetMapping("/webapi/createUser")
 	@ResponseBody
 	public String createUser(@RequestParam String email, @RequestParam String password, @RequestParam String name,
 			@RequestParam int age, @RequestParam String gender, @RequestParam double height, @RequestParam double weight,
@@ -159,19 +159,19 @@ public class WheelShareController {
 				wc_height, wc_width);
 	}
 
-	@GetMapping("/api/retrieveUserByEmail")
+	@GetMapping("/webapi/retrieveUserByEmail")
 	@ResponseBody
 	public User retrieveUserByEmail(@RequestParam String email) throws InterruptedException, ExecutionException {
 		return userService.retrieveUserByEmail(email);
 	}
 
-	@GetMapping("/api/retrieveUserIdByEmail")
+	@GetMapping("/webapi/retrieveUserIdByEmail")
 	@ResponseBody
 	public String retrieveUserIdByEmail(@RequestParam String email) throws InterruptedException, ExecutionException {
 		return userService.retrieveUserIdByEmail(email);
 	}
 
-	@GetMapping("/api/updateUserByEmail")
+	@GetMapping("/webapi/updateUserByEmail")
 	@ResponseBody
 	public String updateUserByEmail(@RequestParam String oldEmail, @RequestParam String newEmail,
 			@RequestParam String password,
@@ -184,14 +184,14 @@ public class WheelShareController {
 				wheel_type, tire_mat, wc_height, wc_width);
 	}
 
-	@GetMapping("/api/deleteUserByEmail")
+	@GetMapping("/webapi/deleteUserByEmail")
 	@ResponseBody
 	public String deleteUserByEmail(@RequestParam String email) throws InterruptedException, ExecutionException {
 		return userService.deleteUserByEmail(email);
 	}
 
 	// ----------------------- Testing Endpoint -------------------------
-	@GetMapping("/api/testRoute")
+	@GetMapping("/webapi/testRoute")
 	@ResponseBody
 	public MapRoute testRoute() throws InvalidAlgorithmParameterException {
 		Map<Long, MapNode> nodeMap = mapService.getNodeMap();

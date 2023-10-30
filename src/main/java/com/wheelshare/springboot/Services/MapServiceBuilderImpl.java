@@ -49,12 +49,12 @@ public class MapServiceBuilderImpl implements MapServiceBuilder {
 
 			// * Read the file in
 			// Local mapData location
-			Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath +
-					"/src/main/resources/mapData.json"));
+			// Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath +
+			// 		"/src/main/resources/mapData.json"));
 					
 			// Server mapData location
-			// Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath +
-			// "/mapData.json"));
+			Object jsonFileObject = parser.parse(new FileReader(absoluteFilePath +
+			"/mapData.json"));
 			
 			JSONObject jsonObject = (JSONObject) jsonFileObject;
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #This script downloads the OSM data by hitting the Overpass API
 
 #Set default bounding box
